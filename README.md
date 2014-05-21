@@ -9,4 +9,4 @@
 * Nelson Antunes
 * Guilherme Borges Oliveira
 
-###### Developed during the intership at Big Data University (Sponsored by IBM)
+###### Developed during the internship at Big Data University (Sponsored by IBM)
