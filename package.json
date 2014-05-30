@@ -1,0 +1,17 @@
+{
+  "name":"Node-CacheApp",
+  "version": "0.0.1",
+  "description": "A sample nodejs app using Elastic Caching Service for BlueMix",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "express": "3.2.6 ",
+    "ejs": "*",
+    "querystring": "0.2.0"
+  },
+  "engines": {
+		"node": "0.10.26"
+  },
+  "repository": {}
+}
