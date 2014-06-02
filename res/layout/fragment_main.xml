@@ -1,0 +1,88 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.example.homeguard.MainActivity$PlaceholderFragment"
+    android:background="#002952" >
+    
+     <TextView
+        android:id="@+id/footer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="5dp"
+        android:text="@string/footer"
+        android:textColor="#FFFFFF" />
+
+     <ImageView
+         android:id="@+id/mainLogo"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:layout_above="@+id/mainText"
+         android:layout_centerHorizontal="true"
+         android:paddingBottom="5dp"
+         android:scaleType="centerInside"
+         android:src="@drawable/main_logo_xsm" />
+
+     <TextView
+         android:id="@+id/mainText"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:layout_centerHorizontal="true"
+         android:layout_centerVertical="true"
+         android:text="@string/home_guard_main_text"
+         android:textAllCaps="true"
+         android:textAppearance="?android:attr/textAppearanceLarge"
+         android:textColor="#FFFFFF" />
+
+     <EditText
+         android:id="@+id/textUsername"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:layout_below="@+id/mainText"
+         android:layout_centerHorizontal="true"
+         android:layout_marginTop="20dp"
+         android:ems="10"
+         android:hint="@string/username_hint"
+         android:textColor="#FFFFFF"
+         android:textColorHint="#99A9BA"
+         android:inputType="textEmailAddress" >
+
+         <requestFocus />
+     </EditText>
+
+     <EditText
+         android:id="@+id/textPassword"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:layout_below="@+id/textUsername"
+         android:layout_centerHorizontal="true"
+         android:layout_marginTop="8dp"
+         android:ems="10"
+         android:hint="@string/password_hint"
+         android:inputType="textPassword"
+         android:textColor="#FFFFFF"
+         android:textColorHint="#99A9BA" />
+
+     <Button
+         android:id="@+id/btLogin"
+         android:layout_width="70dp"
+         android:layout_height="40dp"
+         android:layout_alignLeft="@+id/footer"
+         android:layout_alignRight="@+id/footer"
+         android:layout_below="@+id/textPassword"
+         android:layout_marginTop="20dp"
+         android:background="#FFFFFF"
+         android:text="@string/bt_login"
+         android:textColor="#000000" />
+
+     <TextView
+        android:id="@+id/section_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />  
+</RelativeLayout>

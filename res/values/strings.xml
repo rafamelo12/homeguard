@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">HomeGuard</string>
+    <string name="title_section1">Screenshot</string>
+    <string name="title_section2">Settings</string>
+    <string name="title_section3">Logout</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="action_example">Example action</string>
+    <string name="action_settings">Settings</string>
+    <string name="bt_login">Login</string>
+    <string name="footer">Big Data University © 2014</string>
+    <string name="username_hint">Username</string>
+    <string name="password_hint">********</string>
+    <string name="home_guard_main_text">Home Guard</string>
+
+</resources>
