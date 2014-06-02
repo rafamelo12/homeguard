@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Cache Service with Node.js Example - Using REST API</title>
+    <link rel='stylesheet' href='/stylesheets/style.css'/>
+  </head>
+  <body>
+    <h1>Application Example: run DataCache using REST API</h1>
+    <div class="container">
+        <h2>Grid Operations:</h2> 
+        <form class="form-horizontal">
+            <div class="form-group">
+            	<label for="key">Key:</label>
+	    	    <input id="key" class="form-control" type='text' name='key' placeholder="Input key"/>
+			</div>
+	    	<div class="form-group">
+	    		<label for="value">Value: </label>
+	    		<input id='value' class="form-control" type="text" name='value'/>
+	    	</div>
+	    </form>
+	    <div id='echo' class="messageInfo"></div>
+	    <div class="buttonContainer">
+	    	<button class="btn btn-primary" id='get' onclick="getCache()">Get</button>
+			<button class="btn btn-primary" id='put' onclick="putCache()">Put</button>
+			<button class="btn btn-primary" id='delete' onclick="removeCache()">Delete</button>
+	    </div>
+	</div>
+    <script type="text/javascript" src="/js/index.js"></script>
+  </body>
+</html>
