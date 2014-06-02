@@ -1,9 +1,10 @@
-var net = require('net')
-var fs = require('fs')
-var bl = require('bl')
+var net = require('net');
+var fs = require('fs');
+var bl = require('bl');
+var uuid = require('node-uuid');
 //-------------------------------------
-var tcp_port = 4040
-var tpc_host = 'localhost'
+var tcp_port = 4040;
+var tpc_host = 'localhost';
 //-------------------------------------
 
 var imgNum = 0;
@@ -23,12 +24,12 @@ tcp_server.on('connection', function(socket) {
 
         console.log("Receiving file...");
 
-        var fd = 'image-' + imgNum + '.jpg';
+        var fd = uuid.v4() + '.jpg';
 
         fs.open(fd, 'w', function(err, fd) {
             if (err)
                 console.log("Error opening the file: " + err);
-            console.log("File " + fd + " successfully received!")
+            console.log("File " + fd + " successfully received!");
         });
 
         fs.writeFile(fd, data, function(err) {
