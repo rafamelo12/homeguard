@@ -2,7 +2,7 @@ import socket
 #import picamera
 #import time
 
-#def takePicture():
+#def take_picture():
 # 	camera = picamera.PiCamera()
 # 	now = time.gmtime()
 # 	strNow = str(now[0])+"-"+str(now[1])+"-"+str(now[2])+"-"+str(now[3])+"-"+str(now[4])+"-"+str(now[5])
