@@ -2,7 +2,7 @@ import socket
 #import picamera
 #import time
 
-#def takePicture():
+#def take_picture():
 # 	camera = picamera.PiCamera()
 # 	now = time.gmtime()
 # 	strNow = str(now[0])+"-"+str(now[1])+"-"+str(now[2])+"-"+str(now[3])+"-"+str(now[4])+"-"+str(now[5])
@@ -17,8 +17,8 @@ server.listen(5)
 while(1):
 	(clientsocket, address) = server.accept()
 	#print('Accepted new connection')
-	#fileName = take_picture(clientsocket, address)
-	picture = open(fileName)
+	#file_name = take_picture(clientsocket, address)
+	picture = open(file_name)
 	fp = picture.read()
 	clientsocket.sendall(fp)
 	clientsocket.close()

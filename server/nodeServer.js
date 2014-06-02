@@ -4,18 +4,22 @@ var bl = require('bl');
 var uuid = require('node-uuid');
 //-------------------------------------
 var tcp_port = 5050;
-var tpc_host = 'localhost';
+var tpc_host = '138.51.223.241';
 //-------------------------------------
 
-var imgNum = 0;
+var fileNum = 0;
 
 // Creates TCP server
 var tcp_server = net.createServer();
+
+var clients = []
 
 // When connection is received, creates a socket and retrieves
 // all data using a buffer list, writting it to a file.
 tcp_server.on('connection', function(socket) {
     socket.name = socket.remoteAddress + ':' + socket.remotePort;
+    clients.push(socket);
+    console.log('number of connections: ' + clients.length);
     console.log("Server connected to " + socket.name + '\n');
 
     socket.pipe(bl(function(err, data) {
@@ -24,20 +28,26 @@ tcp_server.on('connection', function(socket) {
 
         console.log("Receiving file...");
 
-        var fd = uuid.v4()+'.jpg';
+        var file_descriptor = uuid.v4() + '.jpg';
 
-        fs.open(fd, 'w', function(err, fd) {
+        fs.open(file_descriptor, 'w', function(err, fd) {
             if (err)
                 console.log("Error opening the file: " + err);
-            console.log("File " + fd + " successfully received!")
+            console.log("File " + file_descriptor + " successfully received!")
         });
 
-        fs.writeFile(fd, data, function(err) {
+        fs.writeFile(file_descriptor, data, function(err) {
             if (err) console.log("Error writting: " + err);
             console.log("File transfer complete\n");
-            imgNum++;
+            fileNum++;
         });
     }));
+
+    socket.on('end', function() {
+        clients.splice(clients.indexOf(socket), 1);
+        console.log('connection with ' + socket.name + ' closed.');
+        console.log('number of connections: ' + clients.length);
+    })
 });
 
 tcp_server.listen(tcp_port, tpc_host, function() {
