@@ -53,3 +53,7 @@ tcp_server.on('connection', function(socket) {
 tcp_server.listen(tcp_port, tpc_host, function() {
     console.log("Server bound to " + tpc_host + ':' + tcp_port);
 })
+
+//function authenticate(device_id, device_owner, auth_key) {
+
+//}
