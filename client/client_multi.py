@@ -1,7 +1,7 @@
 import socket
 from os import listdir
-CONN_HOST = '138.51.223.241'
-#CONN_HOST = 'localhost'
+#CONN_HOST = '138.51.223.241'
+CONN_HOST = 'localhost'
 CONN_PORT = 5050
 FILE_EXT  = '.jpg'
 LIST_DIR  = './'

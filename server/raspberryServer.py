@@ -1,6 +1,7 @@
 import socket
-#import picamera
-#import time
+import base64
+# import picamera
+# import time
 
 #def take_picture():
 # 	camera = picamera.PiCamera()
@@ -16,9 +17,12 @@ server.listen(5)
 
 while(1):
 	(clientsocket, address) = server.accept()
-	#print('Accepted new connection')
-	#file_name = take_picture(clientsocket, address)
-	picture = open(file_name)
-	fp = picture.read()
-	clientsocket.sendall(fp)
+	# print('Accepted new connection')
+	# file_name = take_picture(clientsocket, address)
+	file_name = 'test.jpg'
+	picture = open(file_name,'rb')
+	with picture as image_file:
+	    to_send = base64.b64encode(image_file.read())
+	# to_send = picture.read()
+	clientsocket.sendall(to_send)
 	clientsocket.close()
