@@ -1,30 +1,23 @@
 import socket
 from os import listdir
 CONN_HOST = 'localhost'
-CONN_PORT = 4040
+CONN_PORT = 5050
+FILE_EXT  = '.jpg'
+LIST_DIR  = './'
 
-# print("Connection established!")
+files = []
+for file in listdir(LIST_DIR):
+    if file.endswith(FILE_EXT):
+        files.append(file)
 
-# print("Attempting to send files...")
-images = []
-for file in listdir('./'):
-    if file.endswith(".jpg"):
-        images.append(file)
-
-count = 1
-
-for each in images:
-	client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+for x in range(len(files)):
+	client_socket = socket.socket()
 	client_socket.connect((CONN_HOST, CONN_PORT))
-	fp = open(each,'rb')
-	print("File",each,"loaded!")
-	to_send = fp.read()
-	# print("Your data is:", to_send)
-	print("Sending file" + str(count) + "...")
-	count = count + 1
+	current_file = open(files[x],'rb')
+	print("File '" + files[x] + "' loaded!")
+	to_send = current_file.read()
+	print("Sending file",str(x + 1) + "...")
 	client_socket.send(to_send)
 	print("File Sent!")
-	fp.close()
+	current_file.close()
 	client_socket.close()
-# print("All files sent!")
-#client_socket.close()

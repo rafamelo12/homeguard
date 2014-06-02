@@ -3,7 +3,7 @@ var fs = require('fs');
 var bl = require('bl');
 var uuid = require('node-uuid');
 //-------------------------------------
-var tcp_port = 4040;
+var tcp_port = 5050;
 var tpc_host = 'localhost';
 //-------------------------------------
 
@@ -37,7 +37,7 @@ tcp_server.on('connection', function(socket) {
             console.log("File transfer complete\n");
             imgNum++;
         });
-    }))
+    }));
 });
 
 tcp_server.listen(tcp_port, tpc_host, function() {
