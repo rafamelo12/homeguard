@@ -13,12 +13,15 @@ for file in listdir():
     if file.endswith(".jpg"):
         images.append(file)
 
+count = 1
+
 for each in images:
 	fp = open(each,'rb')
 	print("File",each,"loaded!")
 	to_send = fp.read()
 	# print("Your data is:", to_send)
-	print("Sending...")
+	print("Sending file" + count + "...")
+	count = count + 1
 	client_socket.sendall(to_send)
 	fp.close()
 print("All files sent!")
