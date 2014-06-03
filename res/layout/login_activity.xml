@@ -36,7 +36,6 @@
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:text="@string/home_guard_main_text"
-        android:textAllCaps="true"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="#FFFFFF" />
 
