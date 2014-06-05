@@ -17,13 +17,21 @@ class HGServerProtocol(WebSocketServerProtocol):
         and database routines.
         """
         print("Client connecting: {0}".format(request.peer))
+        print("Starting camera capture routine...")
+
+        create_json(take_picture(picamera))
+
 
     def onOpen(self):
         """() -> ()
         Defines the server response to its opening.
-        When the socket opens, a log entry is written stating it status.
+        When the socket opens, a log entry is written stating it status and the database
+        connection is created.
         """
         print("WebSocket connection open.")
+        HGServerProtocel.homeguard_db = HGCloudantDB('neryuuk', 'cenditheroddemingiviceds', 'JHHEEBQm17EU3RaGo6mbY6JY')
+        response = HGServerProtocel.homeguard_db.getDB('homeguard')
+        print("Database status: {0}".format(response.status_code))
 
     def onMessage(self, payload, isBinary):
         """(Stream, Boolean) -> ()
@@ -60,7 +68,7 @@ class HGCloudantDB:
 
         self.account = cloudant.Account(acc)
         self.login = self.account.(user, passwd)
-        return self.login.status_code
+        print("Login status: {0}".format(self.login.status_code))
 
     def getDB(db_name):
         """(String) -> (Response Object)
@@ -96,7 +104,9 @@ class HGCloudantDB:
         doc_json: A dictionary object formated as a JSON.
         """
 
-        
+        self.document = self.db.document(doc_id)
+
+        return self.document.put(params = doc_json)
 
 def new_id():
     '''() -> str
@@ -111,6 +121,14 @@ def string64(buff):
     return str(b64encode(buff.read()))[2:-1]
 
 def take_picture(picamera):
+    '''(PiCamera) -> (Stream, Stream)
+    Takes a couple of pictures with PiCamera, storing one on the hard-drive and
+    the other on a stream object. Opens the stored file and loads its content into
+    a second stream and returns both.
+
+    @params:
+    picamera: PiCamera object from picamera module
+    '''
 
     stream = io.BytesIO()
 
@@ -130,7 +148,13 @@ def take_picture(picamera):
 
     return (img_file, stream)
 
-def upload_file(_file_data_, _stream_data_):
+def create_json(_file_data_, _stream_data_):
+    '''(Stream, Stream) -> (Dictionary)
+    Creates a JSON object using stream data.
+
+    @params:
+    _file_data_, _stream_data_: Stream data to be written on JSON object
+    '''
 
     _file_JSON_ = {
     'utc_timestamp': str(datetime.utcnow()),
@@ -146,12 +170,8 @@ def upload_file(_file_data_, _stream_data_):
             }
         }
     }
-    
-    doc = db.document(new_id())
 
-    response = doc.put(params = _file_JSON_)
-
-    return response
+    return _file_JSON_
 
 #cloudant_username = 'fesoliveira'
 #db_login = 'heedierstreallstatingstr'
