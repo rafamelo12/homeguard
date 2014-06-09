@@ -175,12 +175,12 @@ def create_json(_file_data_, _stream_data_):
 
 if __name__ == '__main__':
 
-    ws_host = 'ws://pi.neryuuk.com:5000'
+    ws_host = 'ws://pi.neryuuk.com:6743'
     factory = WebSocketServerFactory(ws_host, debug = False)
     factory.protocol = HGServerProtocol
 
     loop = asyncio.get_event_loop()
-    coro = loop.create_server(factory, 'pi.neryuuk.com', 5000)
+    coro = loop.create_server(factory, 'pi.neryuuk.com', 6743)
     server = loop.run_until_complete(coro)
 
     try:
