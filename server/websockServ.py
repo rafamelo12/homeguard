@@ -1,5 +1,6 @@
 import sys, os
 from autobahn.asyncio.websocket import WebSocketServerProtocol, WebSocketServerFactory
+import asyncio
 import cloudant
 import io
 import picamera
