@@ -175,7 +175,7 @@ def create_json(_file_data_, _stream_data_):
 if __name__ == '__main__':
 
     ws_host = 'ws://pi.neryuuk.com:5000'
-    factory = WebSocketServerFactory(ws_host, debug = false)
+    factory = WebSocketServerFactory(ws_host, debug = False)
     factory.protocol = HGServerProtocol
 
     loop = asyncio.get_event_loop()
