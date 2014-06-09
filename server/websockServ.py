@@ -180,7 +180,7 @@ if __name__ == '__main__':
     factory.protocol = HGServerProtocol
 
     loop = asyncio.get_event_loop()
-    coro = loop.create_server(factory, '70.27.126.4', 5000)
+    coro = loop.create_server(factory, 'pi.neryuuk.com', 5000)
     server = loop.run_until_complete(coro)
 
     try:
