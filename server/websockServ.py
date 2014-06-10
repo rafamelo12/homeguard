@@ -38,7 +38,7 @@ class HGServerProtocol(WebSocketServerProtocol):
         (stream1, stream2) = take_picture(picamera)
         (doc_id, doc_json) = create_json(stream1, stream2)
 
-        response = HGServerProtocol.homeguard_db.db.createDoc(doc_id, doc_json)
+        response = HGServerProtocol.homeguard_db.createDoc(doc_id, doc_json)
 
         #response = HGServerProtocol.homeguard_db.createDoc(doc_id, doc_json)
 
