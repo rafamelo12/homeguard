@@ -158,7 +158,7 @@ def take_picture(picamera):
         camera.exposure_mode = 'auto'
         camera.resolution = (1366, 768)
         #camera.vflip = True
-        time.sleep(5)
+        time.sleep(1)
         camera.capture('file.jpg')
         camera.capture(stream, 'jpeg')
 
