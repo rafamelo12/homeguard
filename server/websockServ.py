@@ -195,7 +195,7 @@ if __name__ == '__main__':
 
     fac_host = 'pi.neryuuk.com'
     fac_port = 5050
-    ws_host = 'ws://' + fac_host + ':' + fac_port
+    ws_host = 'ws://' + fac_host + ':' + str(fac_port)
 
     factory = WebSocketServerFactory(ws_host, debug = False)
     factory.protocol = HGServerProtocol
