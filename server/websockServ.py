@@ -157,7 +157,10 @@ def take_picture(picamera):
         camera.capture('file.jpg')
         camera.capture(stream, 'jpeg')
 
-    img_file = open('file.jpg','rb')
+    with open('file.jpg','rb') as f:
+        img_file = f.read()
+
+    assert(f.closed)
 
     print('\'file.jpg\' captured!')
     stream.seek(0)
@@ -165,6 +168,8 @@ def take_picture(picamera):
 
     #img_file = open('profile2.jpg', 'rb')
     #stream = open('test.jpg', 'rb')
+
+
 
     return (img_file, stream)
 
