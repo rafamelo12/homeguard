@@ -135,7 +135,12 @@ def string64(buff):
     '''(Buffer) -> str
     Return a base64 encoded string correctly formated for JSON.
     '''
-    return str(b64encode(buff.read()))[2:-1]
+
+    if(type(buff) == 'string'):
+        return str(b64encode(buff))
+
+    else: 
+        return str(b64encode(buff.read()))[2:-1]
 
 def take_picture(picamera):
     '''(PiCamera) -> (Stream, Stream)
