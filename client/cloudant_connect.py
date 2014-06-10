@@ -18,7 +18,9 @@ def string64(buff):
     '''(Buffer) -> str
     Return a base64 encoded string correctly formated for JSON.
     '''
-    return str(b64encode(buff.read()))[2:-1]
+    b64 = str(b64encode(buff.read()))[2:-1]
+    buff.close()
+    return b64
 
 # Cloudant account information
 ACCOUNT = 'neryuuk'
