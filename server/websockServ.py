@@ -136,8 +136,8 @@ def string64(buff):
     Return a base64 encoded string correctly formated for JSON.
     '''
 
-    if(type(buff) == 'string'):
-        return str(b64encode(buff))
+    if(type(buff) == 'bytes'):
+        return str(b64encode(buff))[2:-1]
 
     else: 
         return str(b64encode(buff.read()))[2:-1]
@@ -164,8 +164,6 @@ def take_picture(picamera):
 
     with open('file.jpg','rb') as f:
         img_file = f.read()
-
-    assert(f.closed)
 
     print('\'file.jpg\' captured!')
     stream.seek(0)
