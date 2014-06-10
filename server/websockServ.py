@@ -193,9 +193,9 @@ def create_json(_file_data_, _stream_data_):
 
 if __name__ == '__main__':
 
-    ws_host = 'ws://pi.neryuuk.com:5000'
     fac_host = 'pi.neryuuk.com'
-    fac_port = 5000
+    fac_port = 5050
+    ws_host = 'ws://' + fac_host + ':' + fac_port
 
     factory = WebSocketServerFactory(ws_host, debug = False)
     factory.protocol = HGServerProtocol
