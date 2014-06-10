@@ -136,7 +136,7 @@ def string64(buff):
     Return a base64 encoded string correctly formated for JSON.
     '''
 
-    if(type(buff) == 'bytes'):
+    if(type(buff) == bytes):
         return str(b64encode(buff))[2:-1]
 
     else: 
