@@ -70,3 +70,4 @@ response = doc.put(params = {
 
 print(response.status_code,response.json())
 account.logout()
+del account
