@@ -11,18 +11,26 @@ import base64
 # 	camera.capture(fileName)
 # 	return fileName
 
+server_host = "138.51.58.186"
+server_port = 5000
+
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-server.bind((socket.gethostname(), 5000))
-server.listen(5)
+server.bind((server_host, server_port))
+print ('server bound to ' + server_host + ':' + str(server_port))
+server.listen(10)
 
 while(1):
 	(clientsocket, address) = server.accept()
+	print("client connected from " + str(address))
 	# print('Accepted new connection')
 	# file_name = take_picture(clientsocket, address)
 	file_name = 'test.jpg'
 	picture = open(file_name,'rb')
+	#print('image data being sent: ' + str(base64.b64encode(picture.read())))
 	with picture as image_file:
 	    to_send = base64.b64encode(image_file.read())
+	    data_size = len(to_send)
 	# to_send = picture.read()
-	clientsocket.sendall(to_send)
+	while()
+	clientsocket.send(to_send)
 	clientsocket.close()

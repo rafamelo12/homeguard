@@ -18,31 +18,43 @@ class HGServerProtocol(WebSocketServerProtocol):
         When a connection is estabilished, the server logs the client id and executes the camera
         and database routines.
         """
-        print("Client connecting: {0}".format(request.peer))
-        print("Starting camera capture routine...")
 
-        response = HGServerProtocol.homeguard_db.db.createDoc(create_json(take_picture(picamera)))
-
-        if(response.status_code == 201):
-            print ('Response JSON: ' + response.json())
-            print ('Document JSON: ' + HGServerProtocol.homeguard_db.getDoc(response.json()['id']))
-            self.sendMessage('201: ' + response.json()['id'])
-
-        elif(response.status_code == 409):
-            print ('Response JSON: ' + response.json())
-            self.sendMessage('409: ' + response.json()['error'])
-
-
-    def onOpen(self):
-        """() -> ()
-        Defines the server response to its opening.
-        When the socket opens, a log entry is written stating it status and the database
-        connection is created.
-        """
-        print("WebSocket connection open.")
+        print("WebSocket connection opening...")
+        print('Loging into database server...')
         HGServerProtocol.homeguard_db = HGCloudantDB('neryuuk', 'cenditheroddemingiviceds', 'JHHEEBQm17EU3RaGo6mbY6JY')
         response = HGServerProtocol.homeguard_db.getDB('homeguard')
         print("Database status: {0}".format(response.status_code))
+
+        print("Client connecting: {0}".format(request.peer))
+        
+    def onOpen(self):
+        """() -> ()
+        Defines the server response to its connection opening.
+        When the socket opens, a log entry is written stating it status and the database
+        connection is created.
+        """
+        print("Starting camera capture routine...")
+
+        (stream1, stream2) = take_picture(picamera)
+        (doc_id, doc_json) = create_json(stream1, stream2)
+
+        response = HGServerProtocol.homeguard_db.db.createDoc(doc_id, doc_json)
+
+        #response = HGServerProtocol.homeguard_db.createDoc(doc_id, doc_json)
+
+        if(response.status_code == 201):
+            print ('Response JSON: ' + str(response.json()))
+            print ('Document JSON: ' + str(HGServerProtocol.homeguard_db.getDoc(response.json()['id'])))
+            payload = ("201: " + str(response.json()['id'])).encode('utf8')
+            #print(payload)
+            #print(type(payload))
+            self.sendMessage(payload, False)
+
+        elif(response.status_code == 409):
+            print ('Response JSON: ' + str(response.json()))
+            payload = ('409: ' + str(response.json()['error'])).encode('utf8')
+            #print(payload)
+            self.sendMessage(payload, False)
 
     def onMessage(self, payload, isBinary):
         """(Stream, Boolean) -> ()
@@ -80,6 +92,7 @@ class HGCloudantDB:
         self.account = cloudant.Account(acc)
         self.login = self.account.login(user, passwd)
         print("Login status: {0}".format(self.login.status_code))
+
     def getDB(self, db_name):
         """(String) -> (Response Object)
         Instatiate the database and returns the reponse object.
@@ -89,6 +102,7 @@ class HGCloudantDB:
         """
         self.db = self.account.database(db_name)
         return self.db.get()
+
     def getDoc(self, doc_id):
         """(String) -> (Response Object)
         Opens a document and returns the reponse object.
@@ -98,6 +112,7 @@ class HGCloudantDB:
         """
         self.document = self.db.document(doc_id)
         return self.document.get()
+
     def createDoc(self, doc_id, doc_json):
         """(Dictionary) -> (Response Object)
         Checks if there is a document currently opened and tries to make a
@@ -148,6 +163,9 @@ def take_picture(picamera):
     stream.seek(0)
     print('\'stream.jpg\' captured!')
 
+    #img_file = open('profile2.jpg', 'rb')
+    #stream = open('test.jpg', 'rb')
+
     return (img_file, stream)
 
 def create_json(_file_data_, _stream_data_):
@@ -171,19 +189,26 @@ def create_json(_file_data_, _stream_data_):
             }
         }
     }
-    return _file_JSON_
+    return new_id() ,_file_JSON_
 
 if __name__ == '__main__':
 
-    ws_host = 'ws://pi.neryuuk.com:6743'
+    ws_host = 'ws://pi.neryuuk.com:5000'
+    fac_host = 'pi.neryuuk.com'
+    fac_port = 5000
+
     factory = WebSocketServerFactory(ws_host, debug = False)
     factory.protocol = HGServerProtocol
 
+    #print('Starting loop...')
     loop = asyncio.get_event_loop()
-    coro = loop.create_server(factory, 'pi.neryuuk.com', 6743)
+    #print('Starting coro...')
+    coro = loop.create_server(factory, fac_host, fac_port)
+    #print('Starting server...')
     server = loop.run_until_complete(coro)
 
     try:
+        print('Server running on '+ ws_host + '...')
         loop.run_forever()
     except KeyboardInterrupt:
         pass
