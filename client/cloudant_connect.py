@@ -18,7 +18,9 @@ def string64(buff):
     '''(Buffer) -> str
     Return a base64 encoded string correctly formated for JSON.
     '''
-    return str(b64encode(buff.read()))[2:-1]
+    b64 = str(b64encode(buff.read()))[2:-1]
+    buff.close()
+    return b64
 
 # Cloudant account information
 ACCOUNT = 'neryuuk'
@@ -32,14 +34,14 @@ login = account.login(USER, PASS)
 assert login.status_code == client.OK
 print('HTTP status:',login.status_code,client.responses[login.status_code])
 
-#file_name = 'image.jpg'
-#file_mime = guess_type(file_name)[0]
-#pict = open(file_name,'rb')
+# file_name = 'image.jpg'
+# file_mime = guess_type(file_name)[0]
+# pict = open(file_name,'rb')
 stream = io.BytesIO()
 with picamera.PiCamera() as camera:
     camera.exposure_mode = 'auto'
     camera.resolution = (1366, 768)
-    camera.vflip = True
+    # camera.vflip = True
     time.sleep(5)
     camera.capture('file.jpg')
     camera.capture(stream, 'jpeg')
@@ -66,4 +68,6 @@ response = doc.put(params = {
     }
 })
 
-print(response.json())
+print(response.status_code,response.json())
+account.logout()
+del account
