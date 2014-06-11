@@ -4,7 +4,7 @@ from autobahn.asyncio.websocket import WebSocketServerProtocol, WebSocketServerF
 import asyncio
 import cloudant
 import io
-# import picamera
+import picamera
 import time
 from base64 import *
 from datetime import datetime
@@ -18,15 +18,9 @@ class HGServerProtocol(WebSocketServerProtocol):
         and database routines.
         """
         print("WebSocket connection opening...")
-<<<<<<< HEAD
-        print('Logging into database server...')
-        HGServerProtocol.homeguard_db = HGCloudantDB('neryuuk', 'cenditheroddemingiviceds', 'JHHEEBQm17EU3RaGo6mbY6JY')
-        response = HGServerProtocol.homeguard_db.getDB('homeguard')
-=======
         print("Loging into database server...")
         HGServerProtocol.homeguard_db = HGCloudantDB("neryuuk", "cenditheroddemingiviceds", "JHHEEBQm17EU3RaGo6mbY6JY")
         response = HGServerProtocol.homeguard_db.getDB("homeguard")
->>>>>>> a906ea323c116a8ffcf61de0a53bcddb1dc1f9d4
         print("Database status: {0}".format(response.status_code))
         print("Client connecting: {0}".format(request.peer))
 
