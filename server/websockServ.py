@@ -175,7 +175,7 @@ def create_json(_stream_data_):
     _file_data_, _stream_data_: Stream data to be written on JSON object
     """
     local_time = datetime.now()
-    utc_time = datetime.utcfromtimestamp(local_time)
+    utc_time = datetime.utcfromtimestamp(local_time.timestamp())
     _file_JSON_ = {
         "local_timestamp": str(local_time),
         "utc_timestamp": str(utc_time),
