@@ -30,9 +30,8 @@ class HGServerProtocol(WebSocketServerProtocol):
         connection is created.
         """
         print("Starting camera capture routine...")
-
-        (stream1, stream2) = take_picture(picamera)
-        (doc_id, doc_json) = create_json(stream1, stream2)
+        stream = take_picture(picamera)
+        (doc_id, doc_json) = create_json(stream)
 
         response = HGServerProtocol.homeguard_db.createDoc(doc_id, doc_json)
 
@@ -134,56 +133,56 @@ def string64(buff):
     else: 
         return str(b64encode(buff.read()))[2:-1]
 
-def take_picture(picamera):
-    """(PiCamera) -> (Stream, Stream)
-    Takes a couple of pictures with PiCamera, storing one on
-    the hard-drive and the other on a stream object.
+def take_picture(picamera, to_file = False):
+    """(PiCamera, Boolean) -> (Stream)
+    Takes a picture with PiCamera, if to_file is True,
+    saves it to a file and then opens the file to a stream,
+    otherwise keeps it on the memory as a stream object.
     Opens the stored file and loads its content into
     a second stream and returns both.
 
     @params:
     picamera: PiCamera object from picamera module
+    to_file: Boolean, default = False
     """
-    stream = io.BytesIO()
-
     with picamera.PiCamera() as camera:
         camera.exposure_mode = "auto"
         camera.resolution = (1366, 768)
         #camera.vflip = True
-        time.sleep(1)
-        camera.capture("file.jpg")
-        camera.capture(stream, "jpeg")
+        time.sleep(2)
+        if to_file:
+            file_name = new_id() + ".jpg"
+            camera.capture(file_name)
+        else:
+            stream = io.BytesIO()
+            camera.capture(stream, "jpeg")
 
-    with open("file.jpg","rb") as f:
-        img_file = f.read()
+    print("Image captured!")
 
-    print("\"file.jpg\" captured!")
-    stream.seek(0)
-    print("\"stream.jpg\" captured!")
+    if to_file:
+        with open(file_name,"rb") as f:
+            stream = f.read()
+    else:
+        stream.seek(0)
 
-    #img_file = open("profile2.jpg", "rb")
-    #stream = open("test.jpg", "rb")
+    return (stream)
 
-    return (img_file, stream)
-
-def create_json(_file_data_, _stream_data_):
-    """(Stream, Stream) -> (Dictionary)
+def create_json(_stream_data_):
+    """(Stream) -> (String, String)
     Creates a JSON object using stream data.
 
     @params:
     _file_data_, _stream_data_: Stream data to be written on JSON object
     """
+    local_time = datetime.now()
+    utc_time = datetime.utcfromtimestamp(local_time)
     _file_JSON_ = {
-        "utc_timestamp": str(datetime.utcnow()),
-        "local_timestamp": str(datetime.now()),
+        "local_timestamp": str(local_time),
+        "utc_timestamp": str(utc_time),
         "_attachments": {
-            "stream.jpg": {
-                "content_type": "image/jpeg",
-                "data": string64(_stream_data_)
-            },
             "file.jpg": {
                 "content_type": "image/jpeg",
-                "data": string64(_file_data_)
+                "data": string64(_stream_data_)
             }
         }
     }
