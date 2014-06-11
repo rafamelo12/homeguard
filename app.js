@@ -31,54 +31,50 @@ app.get('/', routes.index);
 app.get("/cache/:key", cache.getCache);
 app.put("/cache", cache.putCache);
 app.delete("/cache/:key", cache.removeCache);
+app.post("/")
+app.get("/takepicture", function (req, res){
+    var host = 'http://neryuuk.cloudant.com';
+    var database = 'homeguard';
+    var file = 'file.jpg';
+    var IP = '70.30.52.140';
+    var PORT = '5050';
+    var WebSocketClient = require('websocket').client;
+    var cradle = require('cradle');
+    var c = new(cradle.Connection)(host);
+    var client = new WebSocketClient();
+    var homeguard = c.database(database);
+    client.connect('ws://'+IP+':'+PORT);
 
+
+    function getFile (id){
+       console.log('Get file.');
+       var path = host+'/'+database+'/'+id+'/'+file;
+       console.log('path: '+path);
+       res.write('<html><body><div align="center"><h1>Your picture: </h1><br><img src="'+path+'" height="500"></div>');
+
+    }
+    client.on('connect', function (connection){
+       console.log("Connected!");
+       connection.on('error', function (error){
+          console.log("Connection Error: " + error.toString());
+       });
+       connection.on('close', function(){
+          console.log('Closed connection.');
+       });
+       connection.on('message', function (message){
+          var msgUtf8 = message.utf8Data;
+          console.log("Received: " + message.utf8Data);
+          var parsed = msgUtf8.toString().split(":");
+          var status_code = parsed[0];
+          var id = parsed[1].trim();
+          console.log("id: " + id);
+          getFile(id);
+          res.end();
+          connection.close();
+       });
+    });
+        
+});
 http.createServer(app).listen(app.get('port'), function() {
     console.log('Express server listening on port ' + app.get('port'));
 });
-
-//-------------------------------------------
-var net = require('net');
-var fs = require('fs');
-var bl = require('bl');
-var uuid = require('node-uuid');
-//-------------------------------------
-var tcp_port = 5050;
-var tpc_host = 'localhost';
-//-------------------------------------
-
-var imgNum = 0;
-
-// Creates TCP server
-var tcp_server = net.createServer();
-
-// When connection is received, creates a socket and retrieves
-// all data using a buffer list, writting it to a file.
-tcp_server.on('connection', function(socket) {
-    socket.name = socket.remoteAddress + ':' + socket.remotePort;
-    console.log("Server connected to " + socket.name + '\n');
-
-    socket.pipe(bl(function(err, data) {
-        if (err)
-            console.error(err);
-
-        console.log("Receiving file...");
-
-        var fd = uuid.v4() + '.jpg';
-
-        fs.open(fd, 'w', function(err, fd) {
-            if (err)
-                console.log("Error opening the file: " + err);
-            console.log("File " + fd + " successfully received!")
-        });
-
-        fs.writeFile(fd, data, function(err) {
-            if (err) console.log("Error writting: " + err);
-            console.log("File transfer complete\n");
-            imgNum++;
-        });
-    }));
-});
-
-tcp_server.listen(tcp_port, tpc_host, function() {
-    console.log("Server bound to " + tpc_host + ':' + tcp_port);
-})

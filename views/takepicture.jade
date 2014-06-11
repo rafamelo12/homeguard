@@ -1,0 +1,29 @@
+doctype html
+html(lang="en")
+	head
+		link(rel='stylesheet' href='stylesheets/button.css')
+		script(src='https://cdn.socket.io/socket.io-1.0.4.js')
+		script.
+			function sendSignal(){
+			console.log('sendSignal()')
+			var socket = io('localhost:5050');
+			socket.on('data', function (data){
+				console.log('data');
+				});
+			}
+			//- socket.on('connect', function (){
+			//- 	socket.send('something');
+			//- 	console.log('Connected');
+			//- 	socket.destroy()
+			//- 	});
+
+			//- socket.on('end', function(){
+			//- 	console.log('aaand its gone...');
+			//- 	});
+			//- }
+		title="HomeGuard"
+	body(bgcolor="fffafa")
+		h1(align="center") HomeGuard
+		p(align="center")
+			button(onClick='sendSignal()' class="button") Take a Picture
+		p.

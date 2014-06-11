@@ -5,6 +5,9 @@ html(lang="en")
 		title="HomeGuard"
 	body(bgcolor="fffafa")
 		h1(align="center") HomeGuard
-		p(align="center")
-			a(href="#" class="button") Take a Picture
-		p.
+		form(name="take_picture", method="get", action="/takepicture")
+			p(align="center")
+				input(type="submit", class="button", value="Take a picture") 
+				
+			
+		
