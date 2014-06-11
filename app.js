@@ -33,26 +33,30 @@ app.put("/cache", cache.putCache);
 app.delete("/cache/:key", cache.removeCache);
 app.post("/")
 app.get("/takepicture", function (req, res){
+    /* Default settings */
     var host = 'http://neryuuk.cloudant.com';
     var database = 'homeguard';
     var file = 'file.jpg';
     var IP = '70.30.52.140';
     var PORT = '5050';
-    var WebSocketClient = require('websocket').client;
-    var cradle = require('cradle');
+    var WebSocketClient = require('websocket').client; // Library used to create the websocket
+    var cradle = require('cradle'); // Library used to connect with Cloudant
     var c = new(cradle.Connection)(host);
-    var client = new WebSocketClient();
-    var homeguard = c.database(database);
-    client.connect('ws://'+IP+':'+PORT);
+    var client = new WebSocketClient(); // Creating the websocket
+    var homeguard = c.database(database); // Getting the database from Cloudant
+    client.connect('ws://'+IP+':'+PORT); // Connecting to the Raspberry Pi
 
 
-    function getFile (id){
+    function getFile (id){ // Function to get the file from Cloudant and embed in a HTML
        console.log('Get file.');
        var path = host+'/'+database+'/'+id+'/'+file;
        console.log('path: '+path);
        res.write('<html><body><div align="center"><h1>Your picture: </h1><br><img src="'+path+'" height="500"></div>');
 
     }
+    /* Creating the functions to handle possible errors and the when the connection
+       is established.
+    */
     client.on('connect', function (connection){
        console.log("Connected!");
        connection.on('error', function (error){
@@ -64,6 +68,7 @@ app.get("/takepicture", function (req, res){
        connection.on('message', function (message){
           var msgUtf8 = message.utf8Data;
           console.log("Received: " + message.utf8Data);
+          // Parsing the message received from the RPi server and getting the id
           var parsed = msgUtf8.toString().split(":");
           var status_code = parsed[0];
           var id = parsed[1].trim();
