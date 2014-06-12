@@ -1,40 +1,48 @@
 #!/usr/bin/env python3.4
 import sys, os
-from autobahn.asyncio.websocket import WebSocketServerProtocol, WebSocketServerFactory
 import asyncio
 import cloudant
 import io
 import picamera
 import time
-from base64 import *
+from autobahn.asyncio.websocket import WebSocketServerProtocol,/
+                                       WebSocketServerFactory
 from datetime import datetime
+from base64 import *
 from uuid import *
 
 class HGServerProtocol(WebSocketServerProtocol):
+    def __init__(self, account, api_key, api_pass):
+        self.ACCOUNT = account
+        self.API_KEY = api_key
+        self.API_PASS = api_pass
+
     def onConnect(self, request):
         """(Request) -> ()
         Defines the server response when a client connects to it.
-        When a connection is estabilished, the server logs the client id and executes the camera
-        and database routines.
+        When a connection is estabilished, the server logs the
+        client id and executes the camera and database routines.
         """
         print("WebSocket connection opening...")
         print("Loging into database server...")
-        HGServerProtocol.homeguard_db = HGCloudantDB("neryuuk", "cenditheroddemingiviceds", "JHHEEBQm17EU3RaGo6mbY6JY")
-        response = HGServerProtocol.homeguard_db.getDB("homeguard")
+        self.homeguard_db = HGCloudantDB(self.ACCOUNT,/
+                                         self.API_KEY,/
+                                         self.API_PASS)
+        response = self.homeguard_db.getDB("homeguard")
         print("Database status: {0}".format(response.status_code))
         print("Client connecting: {0}".format(request.peer))
 
     def onOpen(self):
         """() -> ()
         Defines the server response to its connection opening.
-        When the socket opens, a log entry is written stating it status and the database
-        connection is created.
+        When the socket opens, a log entry is written
+        stating its status and the database connection is created.
         """
         print("Starting camera capture routine...")
         stream = take_picture(picamera)
         (doc_id, doc_json) = create_json(stream)
 
-        response = HGServerProtocol.homeguard_db.createDoc(doc_id, doc_json)
+        response = self.homeguard_db.createDoc(doc_id, doc_json)
 
         if(response.status_code == 201):
             print ("Response JSON: " + str(response.json()))
@@ -52,7 +60,7 @@ class HGServerProtocol(WebSocketServerProtocol):
     def onMessage(self, payload, isBinary):
         """(Stream, Boolean) -> ()
         Defines the server behavior when it receives a message.
-        TODO: Implement reaction to server to a message from the client.
+        TO-DO: Implement reaction to server to a message from the client.
         Right now, only checks if the data is binary or not,
         and shows its length if the data is binary or its content otherwise.
         Only for debug purposes.
@@ -73,25 +81,25 @@ class HGServerProtocol(WebSocketServerProtocol):
         print("WebSocket connection closed: {0}".format(reason))
 
 class HGCloudantDB:
-    def __init__(self, acc, user, passwd):
+    def __init__(self, acc_user, api_key, api_pass):
         """
         Initializes the DB client and logs into the database,
         returning the login status code.
+
+        :param acc_user: account user string
+        :param api_key: api key string
+        :param api_pass: api password string
         """
-        #self._ACCOUNT_NAME = "fesoliveira"
-        #self._USERNAME = "heedierstreallstatingstr"
-        #self._PASSWORD = "mEkBwWGApngDVESBmP8Yosoj"
-        #self._DBNAME = "homeguard"
-        self.account = cloudant.Account(acc)
-        self.login = self.account.login(user, passwd)
+        self.account = cloudant.Account(acc_user)
+        self.login = self.account.login(api_key, api_pass)
         print("Login status: {0}".format(self.login.status_code))
 
     def getDB(self, db_name):
         """(String) -> (Response Object)
         Instantiate the database and returns the reponse object.
 
-        Params:
-        db_name: A string containing the database name.
+        :param db_name: A string containing the database name.
+        :returns: Response object
         """
         self.db = self.account.database(db_name)
         return self.db.get()
@@ -100,8 +108,8 @@ class HGCloudantDB:
         """(String) -> (Response Object)
         Opens a document and returns the reponse object.
 
-        @Params:
-        doc_id: A string containing the document id.
+        :param doc_id: string containing the document id.
+        :returns: Response object
         """
         self.document = self.db.document(doc_id)
         return self.document.get()
@@ -112,9 +120,9 @@ class HGCloudantDB:
         tries to make a put request on it. Returns
         a reponse object with the operation status.
 
-        @params:
-        doc_id: A string containing the document ID.
-        doc_json: A dictionary object formated as a JSON.
+        :param doc_id: A string containing the document ID.
+        :param doc_json: A dictionary object formated as a JSON.
+        :returns: Response object
         """
         self.document = self.db.document(doc_id)
         return self.document.put(params = doc_json)
@@ -122,19 +130,24 @@ class HGCloudantDB:
 def new_id():
     """() -> str
     Return a UUID formated as string without dashes.
+
+    :returns: uuid formated as string without dashes
     """
     return str(uuid4()).replace("-","")
 
 def string64(buff):
     """(Buffer) -> str
     Return a base64 encoded string correctly formated for JSON.
+
+    :param buff: image as buffer
+    :returns: base64 as string
     """
     if(type(buff) == bytes):
         return str(b64encode(buff))[2:-1]
     else: 
         return str(b64encode(buff.read()))[2:-1]
 
-def take_picture(picamera, to_file = False):
+def take_picture(picamera, to_file = False, raspberry = True):
     """(PiCamera, Boolean) -> (Stream)
     Takes a picture with PiCamera, if to_file is True,
     saves it to a file and then opens the file to a stream,
@@ -142,14 +155,22 @@ def take_picture(picamera, to_file = False):
     Opens the stored file and loads its content into
     a second stream and returns both.
 
-    @params:
-    picamera: PiCamera object from picamera module
-    to_file: Boolean, default = False
+    To test the code without a Raspberry Pi device
+    call take_picture(False, False, False)
+
+    :param picamera: PiCamera object from picamera module
+    :param to_file: capture image to file or not option
+    :param raspberry: test script without a raspberry pi device
+    :returns: image as buffer
     """
+    if not raspberry: 
+        with open("sample.jpg","rb") as f:
+            stream = f.read()
+        return (stream)
+
     with picamera.PiCamera() as camera:
         camera.exposure_mode = "auto"
-        camera.resolution = (1366, 768)
-        #camera.vflip = True
+        camera.resolution = (200, 150)
         time.sleep(2)
         if to_file:
             file_name = new_id() + ".jpg"
@@ -169,11 +190,12 @@ def take_picture(picamera, to_file = False):
     return (stream)
 
 def create_json(_stream_data_):
-    """(Stream) -> (String, String)
-    Creates a JSON object using stream data.
+    """(Stream) -> (String, Dictionary)
+    Creates a dictionary using stream data. The cloudant library
+    interprets the dictionary as if it were a JSON.
 
-    @params:
-    _file_data_, _stream_data_: Stream data to be written on JSON object
+    :param _stream_data_: Stream data to be written on JSON object
+    :returns: id as string, JSON as Dictionary
     """
     local_time = datetime.now()
     utc_time = datetime.utcfromtimestamp(local_time.timestamp())
@@ -190,22 +212,23 @@ def create_json(_stream_data_):
     return new_id(), _file_JSON_
 
 if __name__ == "__main__":
+    account = "neryuuk"
+    api_key = "cenditheroddemingiviceds"
+    api_pass = "JHHEEBQm17EU3RaGo6mbY6JY"
+
     fac_host = "192.168.2.200"
     fac_port = 5050
     ws_host = "ws://pi.neryuuk.com:" + str(fac_port)
 
     factory = WebSocketServerFactory(ws_host, debug = False)
-    factory.protocol = HGServerProtocol
+    factory.protocol = HGServerProtocol(account, api_key, api_pass)
 
-    #print("Starting loop...")
     loop = asyncio.get_event_loop()
-    #print("Starting coro...")
     coro = loop.create_server(factory, fac_host, fac_port)
-    #print("Starting server...")
     server = loop.run_until_complete(coro)
 
     try:
-        print("Server running on {0}...".format(ws_host))
+        print("Server running on {0}.".format(ws_host))
         loop.run_forever()
     except KeyboardInterrupt:
         pass
