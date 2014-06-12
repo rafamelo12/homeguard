@@ -40,10 +40,10 @@ app.get("/takepicture", function (req, res){
     var IP = '70.30.52.140';
     var PORT = '5050';
     var WebSocketClient = require('websocket').client; // Library used to create the websocket
-    var cradle = require('cradle'); // Library used to connect with Cloudant
-    var c = new(cradle.Connection)(host);
+    // var cradle = require('cradle'); // Library used to connect with Cloudant
+    // var c = new(cradle.Connection)(host);
     var client = new WebSocketClient(); // Creating the websocket
-    var homeguard = c.database(database); // Getting the database from Cloudant
+    // var homeguard = c.database(database); // Getting the database from Cloudant
     client.connect('ws://'+IP+':'+PORT); // Connecting to the Raspberry Pi
 
 
@@ -51,7 +51,7 @@ app.get("/takepicture", function (req, res){
        console.log('Get file.');
        var path = host+'/'+database+'/'+id+'/'+file;
        console.log('path: '+path);
-       res.write('<html><body><div align="center"><h1>Your picture: </h1><br><img src="'+path+'" height="500"></div>');
+       res.send('<html><body><div align="center"><h1>Your picture: </h1><br><img src="'+path+'" height="500"></div>');
 
     }
     /* Creating the functions to handle possible errors and the when the connection
