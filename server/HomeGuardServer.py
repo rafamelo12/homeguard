@@ -5,7 +5,7 @@ import cloudant
 import io
 import picamera
 import time
-from autobahn.asyncio.websocket import WebSocketServerProtocol,/
+from autobahn.asyncio.websocket import WebSocketServerProtocol,
                                        WebSocketServerFactory
 from datetime import datetime
 from base64 import *
