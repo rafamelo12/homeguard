@@ -12,10 +12,11 @@ from base64 import *
 from uuid import *
 
 class HGServerProtocol(WebSocketServerProtocol):
-    def __init__(self, account, api_key, api_pass):
-        self.ACCOUNT = account
-        self.API_KEY = api_key
-        self.API_PASS = api_pass
+#    def __init__(self, account, api_key, api_pass):
+    def __init__(self):
+        self.ACCOUNT = "neryuuk"
+        self.API_KEY = "cenditheroddemingiviceds"
+        self.API_PASS = "JHHEEBQm17EU3RaGo6mbY6JY"
 
     def onConnect(self, request):
         """(Request) -> ()
@@ -212,16 +213,12 @@ def create_json(_stream_data_):
     return new_id(), _file_JSON_
 
 if __name__ == "__main__":
-    account = "neryuuk"
-    api_key = "cenditheroddemingiviceds"
-    api_pass = "JHHEEBQm17EU3RaGo6mbY6JY"
-
     fac_host = "192.168.2.200"
     fac_port = 5050
     ws_host = "ws://pi.neryuuk.com:" + str(fac_port)
 
     factory = WebSocketServerFactory(ws_host, debug = False)
-    factory.protocol = HGServerProtocol(account, api_key, api_pass)
+    factory.protocol = HGServerProtocol
 
     loop = asyncio.get_event_loop()
     coro = loop.create_server(factory, fac_host, fac_port)
