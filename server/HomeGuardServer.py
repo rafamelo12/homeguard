@@ -47,7 +47,7 @@ class HGServerProtocol(WebSocketServerProtocol):
 
         if(response.status_code == 201):
             print ("Response JSON: " + str(response.json()))
-            print ("Document JSON: " + str(HGServerProtocol.homeguard_db.getDoc(response.json()["id"])))
+            print ("Document JSON: " + str(self.homeguard_db.getDoc(response.json()["id"])))
             payload = ("201: " + str(response.json()["id"])).encode("utf8")
             #print(payload)
             #print(type(payload))
