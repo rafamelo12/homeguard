@@ -35,42 +35,43 @@ app.delete("/cache/:key", cache.removeCache);
 app.post("/")
 app.get("/takepicture", function (req, res){
     /* Default settings */
-    var host = 'http://neryuuk.cloudant.com';
-    var database = 'homeguard';
-    var file = 'file.jpg';
-    var IP = '70.30.52.140';
-    var PORT = '5050';
+    var host = 'http://neryuuk.cloudant.com'; // Host in Cloudant
+    var database = 'homeguard'; // Name of the Database in Cloudant
+    var file = 'file.jpg'; // Name of the attachment
+    var IP = '70.30.52.140'; // IP of Raspberyy Pi device
+    var PORT = '5050'; // Port where the Python server in Raspberry Pi is listening
     var WebSocketClient = require('websocket').client; // Library used to create the websocket
     var cradle = require('cradle'); // Library used to connect with Cloudant
-    var fs = require('fs');
-    var uuid = require('node-uuid');
-    var c = new(cradle.Connection)(host);
+    var fs = require('fs'); // Library used to save the file in the server
+    var uuid = require('node-uuid'); // Library used to create uuid to solve async file saving problem
+    var c = new(cradle.Connection)(host); // Setting up a connection to Cloudant
     var client = new WebSocketClient(); // Creating the websocket
-    var homeguard = c.database(database); // Getting the database from Cloudant
-    client.connect('ws://'+IP+':'+PORT); // Connecting to the Raspberry Pi
+    var homeguard = c.database(database); // Getting a instance of the database from Cloudant
+    client.connect('ws://'+IP+':'+PORT); // Connecting through the websocket to the Raspberry Pi
 
 
     function getFile (id){ // Function to get the file from Cloudant and embed in a HTML
-    /*console.log('Get file.');
-    var path = host+'/'+database+'/'+id+'/'+file;
-    console.log('path: '+path);
-    res.send('<html><body><div align="center"><h1>Your picture: </h1><br><img src="'+path+'" height="500"></div>');*/
-    var attachmentName = 'file.jpg';
-    var fileName = uuid.v4();
-    var downloadPath = path.join(__dirname, '/tmp/pictures/'+fileName.toString()+'.jpg');
-    var writeStream = fs.createWriteStream(downloadPath);
+    var attachmentName = 'file.jpg'; // 
+    var fileName = uuid.v4(); // Generating the uuid to save the file into server
+    var downloadPath = path.join(__dirname, '/tmp/pictures/'+fileName.toString()+'.jpg'); // Setting the path of where to save the file
+    var writeStream = fs.createWriteStream(downloadPath); // Creating the write stream to save the file into the server
+    /* Getting the attachment from the Cloudant document and setting it 
+        into a variable so we can pipe to the write stream 
+    */
     var readStream = homeguard.getAttachment(id, attachmentName, function (err){
       if(err){
         console.log("Error: " + err.toString());
         return
       }
-      console.log('download completed and written to file on disk at path', downloadPath);
+      /*
+        Now that the file is saved, set the server path to it and embed in a HTML response.
+      */
       var serverPath = '/pictures/'+fileName.toString()+'.jpg';
       res.send('<html><body><div align="center"><h1>Your picture: </h1><br><img src="'+serverPath+'" height="500"></div>');
-      res.end();
+      res.end(); // End the response to the request
       return;
     });
-    readStream.pipe(writeStream);
+    readStream.pipe(writeStream); // Piping the file into the write stream
     
     
     }
@@ -91,6 +92,17 @@ app.get("/takepicture", function (req, res){
           // Parsing the message received from the RPi server and getting the id
           var parsed = msgUtf8.toString().split(":");
           var status_code = parsed[0];
+          /* 
+            Checking if any error ocurred, if the status code sent from
+            RPi is 409 an error occured so the response is ended and
+            connection closed.
+          */
+          if(status_code == '409'){
+            console.log(msgUtf8);
+            res.send('<html><body><div align="center">'+msgUtf8+'</div>');
+            res.end();
+            connection.close();
+          }
           var id = parsed[1].trim();
           console.log("id: " + id);
           getFile(id);
