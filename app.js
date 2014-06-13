@@ -21,6 +21,7 @@ app.use(express.bodyParser());
 app.use(express.methodOverride());
 app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'tmp')));
 
 // development only
 if ('development' === app.get('env')) {
@@ -40,19 +41,38 @@ app.get("/takepicture", function (req, res){
     var IP = '70.30.52.140';
     var PORT = '5050';
     var WebSocketClient = require('websocket').client; // Library used to create the websocket
-    // var cradle = require('cradle'); // Library used to connect with Cloudant
-    // var c = new(cradle.Connection)(host);
+    var cradle = require('cradle'); // Library used to connect with Cloudant
+    var fs = require('fs');
+    var uuid = require('node-uuid');
+    var c = new(cradle.Connection)(host);
     var client = new WebSocketClient(); // Creating the websocket
-    // var homeguard = c.database(database); // Getting the database from Cloudant
+    var homeguard = c.database(database); // Getting the database from Cloudant
     client.connect('ws://'+IP+':'+PORT); // Connecting to the Raspberry Pi
 
 
     function getFile (id){ // Function to get the file from Cloudant and embed in a HTML
-       console.log('Get file.');
-       var path = host+'/'+database+'/'+id+'/'+file;
-       console.log('path: '+path);
-       res.send('<html><body><div align="center"><h1>Your picture: </h1><br><img src="'+path+'" height="500"></div>');
-
+    /*console.log('Get file.');
+    var path = host+'/'+database+'/'+id+'/'+file;
+    console.log('path: '+path);
+    res.send('<html><body><div align="center"><h1>Your picture: </h1><br><img src="'+path+'" height="500"></div>');*/
+    var attachmentName = 'file.jpg';
+    var fileName = uuid.v4();
+    var downloadPath = path.join(__dirname, '/tmp/pictures/'+fileName.toString()+'.jpg');
+    var writeStream = fs.createWriteStream(downloadPath);
+    var readStream = homeguard.getAttachment(id, attachmentName, function (err){
+      if(err){
+        console.log("Error: " + err.toString());
+        return
+      }
+      console.log('download completed and written to file on disk at path', downloadPath);
+      var serverPath = '/pictures/'+fileName.toString()+'.jpg';
+      res.send('<html><body><div align="center"><h1>Your picture: </h1><br><img src="'+serverPath+'" height="500"></div>');
+      res.end();
+      return;
+    });
+    readStream.pipe(writeStream);
+    
+    
     }
     /* Creating the functions to handle possible errors and the when the connection
        is established.
@@ -74,7 +94,6 @@ app.get("/takepicture", function (req, res){
           var id = parsed[1].trim();
           console.log("id: " + id);
           getFile(id);
-          res.end();
           connection.close();
        });
     });
