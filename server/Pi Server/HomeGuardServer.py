@@ -5,7 +5,6 @@ import cloudant
 import io
 import picamera
 import time
-import configparser
 from autobahn.asyncio.websocket import WebSocketServerProtocol,\
                                         WebSocketServerFactory
 from datetime import datetime
@@ -13,12 +12,7 @@ from base64 import *
 from uuid import *
 
 class HGServerProtocol(WebSocketServerProtocol):
-    def __init__(self, config):
-    	self.CONFIG = config
-    	self.ACCOUNT = config.get('Database', 'DBLogin')
-        self.API_KEY = config.get('Database', 'APILogin')
-        self.API_PASS = config.get('Database', 'APIPass')
-
+#    def __init__(self, account, api_key, api_pass):
     def __init__(self):
         self.ACCOUNT = "neryuuk"
         self.API_KEY = "cenditheroddemingiviceds"
@@ -154,7 +148,7 @@ def string64(buff):
     else: 
         return str(b64encode(buff.read()))[2:-1]
 
-def take_picture(config, picamera, to_file = False, raspberry = True):
+def take_picture(picamera, to_file = False, raspberry = True):
     """(PiCamera, Boolean) -> (Stream)
     Takes a picture with PiCamera, if to_file is True,
     saves it to a file and then opens the file to a stream,
@@ -163,7 +157,7 @@ def take_picture(config, picamera, to_file = False, raspberry = True):
     a second stream and returns both.
 
     To test the code without a Raspberry Pi device
-    call take_picture(config, False, False, False)
+    call take_picture(False, False, False)
 
     :param picamera: PiCamera object from picamera module
     :param to_file: capture image to file or not option
@@ -171,7 +165,7 @@ def take_picture(config, picamera, to_file = False, raspberry = True):
     :returns: image as buffer
     """
     if not raspberry: 
-        with open(config.get('Path', 'ImgPath') + "sample.jpg","rb") as f:
+        with open("sample.jpg","rb") as f:
             stream = f.read()
         return (stream)
 
@@ -180,7 +174,7 @@ def take_picture(config, picamera, to_file = False, raspberry = True):
         camera.resolution = (1920, 1080)
         time.sleep(2)
         if to_file:
-            file_name = config.get('Path', 'ImgPath') + new_id() + ".jpg"
+            file_name = new_id() + ".jpg"
             camera.capture(file_name)
         else:
             stream = io.BytesIO()
@@ -219,16 +213,12 @@ def create_json(_stream_data_):
     return new_id(), _file_JSON_
 
 if __name__ == "__main__":
-
-	config = configparse.ConfigParse()
-	config.read('config.ini')
-
-    fac_host = config.get('Raspberry', 'RaspHost')
-    fac_port = config.getint('Raspberry', 'RaspPort')
-    ws_host = config.get('Websocket', 'WSHost') + str(fac_port)
+    fac_host = "192.168.2.200"
+    fac_port = 5050
+    ws_host = "ws://pi.neryuuk.com:" + str(fac_port)
 
     factory = WebSocketServerFactory(ws_host, debug = False)
-    factory.protocol = HGServerProtocol(config)
+    factory.protocol = HGServerProtocol
 
     loop = asyncio.get_event_loop()
     coro = loop.create_server(factory, fac_host, fac_port)
@@ -242,4 +232,3 @@ if __name__ == "__main__":
     finally:
         server.close()
         loop.close()
-
