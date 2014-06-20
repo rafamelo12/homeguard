@@ -219,9 +219,8 @@ def create_json(_stream_data_):
     return new_id(), _file_JSON_
 
 if __name__ == "__main__":
-
-	config = configparse.ConfigParse()
-	config.read('config.ini')
+    config = configparse.ConfigParse()
+    config.read('config.ini')
 
     fac_host = config.get('Raspberry', 'RaspHost')
     fac_port = config.getint('Raspberry', 'RaspPort')
@@ -242,4 +241,3 @@ if __name__ == "__main__":
     finally:
         server.close()
         loop.close()
-
