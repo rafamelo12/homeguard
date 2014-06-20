@@ -15,9 +15,9 @@ from uuid import *
 class HGServerProtocol(WebSocketServerProtocol):
     def __init__(self, config):
         self.CONFIG = config
-        self.ACCOUNT = config.get('Database', 'DBLogin')
-        self.API_KEY = config.get('Database', 'APILogin')
-        self.API_PASS = config.get('Database', 'APIPass')
+        self.ACCOUNT = config.get("Database", "DBLogin")
+        self.API_KEY = config.get("Database", "APILogin")
+        self.API_PASS = config.get("Database", "APIPass")
 
     def __init__(self):
         self.ACCOUNT = "neryuuk"
@@ -171,7 +171,7 @@ def take_picture(config, picamera, to_file = False, raspberry = True):
     :returns: image as buffer
     """
     if not raspberry: 
-        with open(config.get('Path', 'ImgPath') + "sample.jpg","rb") as f:
+        with open(config.get("Path", "ImgPath") + "sample.jpg","rb") as f:
             stream = f.read()
         return (stream)
 
@@ -180,7 +180,7 @@ def take_picture(config, picamera, to_file = False, raspberry = True):
         camera.resolution = (1920, 1080)
         time.sleep(2)
         if to_file:
-            file_name = config.get('Path', 'ImgPath') + new_id() + ".jpg"
+            file_name = config.get("Path", "ImgPath") + new_id() + ".jpg"
             camera.capture(file_name)
         else:
             stream = io.BytesIO()
@@ -220,11 +220,11 @@ def create_json(_stream_data_):
 
 if __name__ == "__main__":
     config = configparser.ConfigParser()
-    config.read('config.ini')
+    config.read("config.ini")
 
-    fac_host = config.get('Raspberry', 'RaspHost')
-    fac_port = config.getint('Raspberry', 'RaspPort')
-    ws_host = config.get('Websocket', 'WSHost') + str(fac_port)
+    fac_host = config.get("Raspberry", "RaspHost")
+    fac_port = config.getint("Raspberry", "RaspPort")
+    ws_host = config.get("Websocket", "WSHost") + ":" + str(fac_port)
 
     factory = WebSocketServerFactory(ws_host, debug = False)
     factory.protocol = HGServerProtocol(config)
