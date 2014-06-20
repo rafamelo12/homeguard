@@ -14,8 +14,8 @@ from uuid import *
 
 class HGServerProtocol(WebSocketServerProtocol):
     def __init__(self, config):
-    	self.CONFIG = config
-    	self.ACCOUNT = config.get('Database', 'DBLogin')
+        self.CONFIG = config
+        self.ACCOUNT = config.get('Database', 'DBLogin')
         self.API_KEY = config.get('Database', 'APILogin')
         self.API_PASS = config.get('Database', 'APIPass')
 
