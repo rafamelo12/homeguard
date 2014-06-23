@@ -3,7 +3,7 @@ import sys, os
 import asyncio
 import cloudant
 import io
-#import picamera
+import picamera
 import time
 import configparser
 from autobahn.asyncio.websocket import WebSocketServerProtocol,\
