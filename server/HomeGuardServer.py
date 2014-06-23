@@ -16,10 +16,10 @@ class HGServerProtocol(WebSocketServerProtocol):
     def __init__(self):
         self.CONFIG = configparser.ConfigParser()
         config.read("config.ini")
-        self.ACCOUNT = config.get("Database", "DBLogin")
+        self.ACCOUNT = config.get("Database", "login")
         self.API_KEY = config.get("Database", "APILogin")
         self.API_PASS = config.get("Database", "APIPass")
-        self.DBNAME = config.get("Database", "DBName")
+        self.DBNAME = config.get("Database", "name")
 
     def onConnect(self, request):
         """(Request) -> ()
@@ -168,7 +168,7 @@ def take_picture(config, picamera, to_file = False, raspberry = True):
     :returns: image as buffer
     """
     if not raspberry: 
-        with open(config.get("Path", "ImgPath") + "sample.jpg","rb") as f:
+        with open(config.get("Path", "image") + "sample.jpg","rb") as f:
             stream = f.read()
         return (stream)
 
@@ -177,7 +177,7 @@ def take_picture(config, picamera, to_file = False, raspberry = True):
         camera.resolution = (1920, 1080)
         time.sleep(2)
         if to_file:
-            file_name = config.get("Path", "ImgPath") + new_id() + ".jpg"
+            file_name = config.get("Path", "image") + new_id() + ".jpg"
             camera.capture(file_name)
         else:
             stream = io.BytesIO()
@@ -219,9 +219,9 @@ if __name__ == "__main__":
     config = configparser.ConfigParser()
     config.read("config.ini")
 
-    fac_host = config.get("Raspberry", "RaspHost")
-    fac_port = config.getint("Raspberry", "RaspPort")
-    ws_host = config.get("Websocket", "WSHost") + ":" + str(fac_port)
+    fac_host = config.get("Raspberry", "host")
+    fac_port = config.getint("Raspberry", "port")
+    ws_host = config.get("Websocket", "host") + ":" + str(fac_port)
 
     factory = WebSocketServerFactory(ws_host, debug = False)
     factory.protocol = HGServerProtocol
