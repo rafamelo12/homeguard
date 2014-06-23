@@ -3,7 +3,7 @@ import sys, os
 import asyncio
 import cloudant
 import io
-import picamera
+#import picamera
 import time
 import configparser
 from autobahn.asyncio.websocket import WebSocketServerProtocol,\
@@ -14,13 +14,8 @@ from uuid import *
 
 class HGServerProtocol(WebSocketServerProtocol):
     def __init__(self):
-        self.ACCOUNT = "neryuuk"
-        self.API_KEY = "cenditheroddemingiviceds"
-        self.API_PASS = "JHHEEBQm17EU3RaGo6mbY6JY"
-        self.DBNAME = "homeguard"
-
-    def __init__(self, config):
-        self.CONFIG = config
+        self.CONFIG = configparser.ConfigParser()
+        config.read("config.ini")
         self.ACCOUNT = config.get("Database", "DBLogin")
         self.API_KEY = config.get("Database", "APILogin")
         self.API_PASS = config.get("Database", "APIPass")
@@ -229,7 +224,7 @@ if __name__ == "__main__":
     ws_host = config.get("Websocket", "WSHost") + ":" + str(fac_port)
 
     factory = WebSocketServerFactory(ws_host, debug = False)
-    factory.protocol = HGServerProtocol(config)
+    factory.protocol = HGServerProtocol()
 
     loop = asyncio.get_event_loop()
     coro = loop.create_server(factory, fac_host, fac_port)
