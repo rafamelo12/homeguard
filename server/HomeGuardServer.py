@@ -13,16 +13,18 @@ from base64 import *
 from uuid import *
 
 class HGServerProtocol(WebSocketServerProtocol):
+    def __init__(self):
+        self.ACCOUNT = "neryuuk"
+        self.API_KEY = "cenditheroddemingiviceds"
+        self.API_PASS = "JHHEEBQm17EU3RaGo6mbY6JY"
+        self.DBNAME = "homeguard"
+
     def __init__(self, config):
         self.CONFIG = config
         self.ACCOUNT = config.get("Database", "DBLogin")
         self.API_KEY = config.get("Database", "APILogin")
         self.API_PASS = config.get("Database", "APIPass")
-
-    def __init__(self):
-        self.ACCOUNT = "neryuuk"
-        self.API_KEY = "cenditheroddemingiviceds"
-        self.API_PASS = "JHHEEBQm17EU3RaGo6mbY6JY"
+        self.DBNAME = config.get("Database", "DBName")
 
     def onConnect(self, request):
         """(Request) -> ()
@@ -35,7 +37,7 @@ class HGServerProtocol(WebSocketServerProtocol):
         self.homeguard_db = HGCloudantDB(self.ACCOUNT,\
                                          self.API_KEY,\
                                          self.API_PASS)
-        response = self.homeguard_db.getDB("homeguard")
+        response = self.homeguard_db.getDB(self.DBName)
         print("Database status: {0}".format(response.status_code))
         print("Client connecting: {0}".format(request.peer))
 
