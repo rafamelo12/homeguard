@@ -224,7 +224,7 @@ if __name__ == "__main__":
     ws_host = config.get("Websocket", "WSHost") + ":" + str(fac_port)
 
     factory = WebSocketServerFactory(ws_host, debug = False)
-    factory.protocol = HGServerProtocol()
+    factory.protocol = HGServerProtocol
 
     loop = asyncio.get_event_loop()
     coro = loop.create_server(factory, fac_host, fac_port)
