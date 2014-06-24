@@ -33,7 +33,7 @@ class HGServerProtocol(WebSocketServerProtocol):
                                          self.API_KEY,\
                                          self.API_PASS)
         print("Back to onConnect...")
-        response = self.homeguard_db.getDB(self.DBName)
+        response = self.homeguard_db.getDB(self.DBNAME)
         print("Database status: {0}".format(response.status_code))
         print("Client connecting: {0}".format(request.peer))
 
