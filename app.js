@@ -5,10 +5,12 @@
  */
 var express = require('express');
 var routes = require('./routes');
-var cache = require('./routes/cache');
+// var cache = require('./routes/cache');
 var http = require('http');
 var path = require('path');
 var jade = require('jade');
+var cradle = require('cradle');
+var bcrypt = require('bcrypt');
 var app = express();
 
 // all environments
@@ -29,19 +31,18 @@ if ('development' === app.get('env')) {
 }
 
 app.get('/', routes.index);
-app.get("/cache/:key", cache.getCache);
-app.put("/cache", cache.putCache);
-app.delete("/cache/:key", cache.removeCache);
+// app.get("/cache/:key", cache.getCache);
+// app.put("/cache", cache.putCache);
+// app.delete("/cache/:key", cache.removeCache);
 app.post("/")
 app.get("/takepicture", function (req, res){
     /* Default settings */
     var host = 'http://neryuuk.cloudant.com'; // Host in Cloudant
     var database = 'homeguard'; // Name of the Database in Cloudant
     var file = 'file.jpg'; // Name of the attachment
-    var IP = '70.30.52.140'; // IP of Raspberyy Pi device
+    var IP = 'neryuuk.noip.me'; // IP of Raspberyy Pi device
     var PORT = '5050'; // Port where the Python server in Raspberry Pi is listening
     var WebSocketClient = require('websocket').client; // Library used to create the websocket
-    var cradle = require('cradle'); // Library used to connect with Cloudant
     var fs = require('fs'); // Library used to save the file in the server
     var uuid = require('node-uuid'); // Library used to create uuid to solve async file saving problem
     var c = new(cradle.Connection)(host); // Setting up a connection to Cloudant
@@ -67,7 +68,7 @@ app.get("/takepicture", function (req, res){
         Now that the file is saved, set the server path to it and embed in a HTML response.
       */
       var serverPath = '/pictures/'+fileName.toString()+'.jpg';
-      res.send('<html><body><div align="center"><h1>Your picture: </h1><br><img src="'+serverPath+'" height="500"></div>');
+      res.send('<html><head><link rel="stylesheet" href="stylesheets/button.css"><title>HomeGuard</title></head><body><div align="center"><h1>Your picture: </h1><br><img src="'+serverPath+'" height="500"><br><a href="/takepicture" class="button"></div>');
       res.end(); // End the response to the request
       return;
     });
@@ -110,6 +111,53 @@ app.get("/takepicture", function (req, res){
        });
     });
         
+});
+app.get("/login", function (req, res){
+  res.render("login.jade");
+});
+app.post("/login2", function (req, res){
+
+  var c = new(cradle.Connection)('http://rafamelo12.cloudant.com', {
+    auth: { username: 'rafamelo12', password: 'bduniversity'}
+  });
+  var users = c.database('users');
+  users.get(req.body.email, function (err, doc){
+    // console.log(doc.password);
+    bcrypt.compare(req.body.password, doc.password, function (err, response){
+      if(response){
+        res.send('Hello, '+doc.name+'! You\'re logged into HomeGuard!!');  
+        res.end();
+      }else{
+        res.send('Wrong password.');  
+        res.end();
+      }
+
+    });
+      
+    
+  });
+  // console.log(req.body.email);
+  // console.log(req.body.password);
+  
+});
+app.get('/register', function (req, res){
+  res.render("register.jade");
+});
+app.post('/register2', function (req, res){
+  var c = new(cradle.Connection)('http://rafamelo12.cloudant.com', {
+    auth: { username: 'rafamelo12', password: 'bduniversity'}
+  });
+  var users = c.database('users');
+  bcrypt.genSalt(10, function (err, salt){
+    bcrypt.hash(req.body.password, salt, function (err, hash){
+      users.save(req.body.email, {
+        password: hash
+      }, function (err, response){
+        console.log('Written in db.');
+        res.end();
+      });
+    });
+  });
 });
 http.createServer(app).listen(app.get('port'), function() {
     console.log('Express server listening on port ' + app.get('port'));
