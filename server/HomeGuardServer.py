@@ -14,6 +14,9 @@ from uuid import *
 
 class HGServerProtocol(WebSocketServerProtocol):
     def __init__(self):
+        """() -> ()
+        Initializes protocol attributes using configuration file.
+        """
         self.CONFIG = configparser.ConfigParser()
         self.CONFIG.read("config.ini")
         self.ACCOUNT = config.get("Database", "login")
@@ -32,7 +35,6 @@ class HGServerProtocol(WebSocketServerProtocol):
         self.homeguard_db = HGCloudantDB(self.ACCOUNT,\
                                          self.API_KEY,\
                                          self.API_PASS)
-        print("Back to onConnect...")
         response = self.homeguard_db.getDB(self.DBNAME)
         print("Database status: {0}".format(response.status_code))
         print("Client connecting: {0}".format(request.peer))
@@ -98,7 +100,6 @@ class HGCloudantDB:
         self.account = cloudant.Account(acc_user)
         self.login = self.account.login(api_key, api_pass)
         print("Login status: {0}".format(self.login.status_code))
-        print("Exiting DB init...")
 
     def getDB(self, db_name):
         """(String) -> (Response Object)
@@ -218,20 +219,26 @@ def create_json(_stream_data_):
     return new_id(), _file_JSON_
 
 if __name__ == "__main__":
+
+    # Reads config file
     config = configparser.ConfigParser()
     config.read("config.ini")
 
+    # Initilializes port and host settings using config data
     fac_host = config.get("Raspberry", "host")
     fac_port = config.getint("Raspberry", "port")
     ws_host = config.get("Websocket", "host") + ":" + str(fac_port)
 
+    # Instantiates webserver factory and attributes it our protocol
     factory = WebSocketServerFactory(ws_host, debug = False)
     factory.protocol = HGServerProtocol
 
+    # Generates a loop, create a server and sets it to run until complete
     loop = asyncio.get_event_loop()
     coro = loop.create_server(factory, fac_host, fac_port)
     server = loop.run_until_complete(coro)
 
+    # Runs the server until an exception is caught
     try:
         print("Server running on {0}.".format(ws_host))
         loop.run_forever()
