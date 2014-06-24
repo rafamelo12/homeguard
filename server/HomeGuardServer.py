@@ -32,6 +32,7 @@ class HGServerProtocol(WebSocketServerProtocol):
         self.homeguard_db = HGCloudantDB(self.ACCOUNT,\
                                          self.API_KEY,\
                                          self.API_PASS)
+        print("Back to onConnect...")
         response = self.homeguard_db.getDB(self.DBName)
         print("Database status: {0}".format(response.status_code))
         print("Client connecting: {0}".format(request.peer))
@@ -97,6 +98,7 @@ class HGCloudantDB:
         self.account = cloudant.Account(acc_user)
         self.login = self.account.login(api_key, api_pass)
         print("Login status: {0}".format(self.login.status_code))
+        print("Exiting DB init...")
 
     def getDB(self, db_name):
         """(String) -> (Response Object)
