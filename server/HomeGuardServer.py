@@ -13,14 +13,6 @@ from base64 import *
 from uuid import *
 
 class HGServerProtocol(WebSocketServerProtocol):
-    def __init__(self):
-        self.CONFIG = configparser.ConfigParser()
-        self.CONFIG.read("config.ini")
-        self.ACCOUNT = config.get("Database", "login")
-        self.API_KEY = config.get("Database", "APILogin")
-        self.API_PASS = config.get("Database", "APIPass")
-        self.DBNAME = config.get("Database", "name")
-
     def __init__(self, config):
         self.CONFIG = config
         self.ACCOUNT = config.get("Database", "login")
