@@ -21,6 +21,13 @@ class HGServerProtocol(WebSocketServerProtocol):
         self.API_PASS = config.get("Database", "APIPass")
         self.DBNAME = config.get("Database", "name")
 
+    def __init__(self, config):
+        self.CONFIG = config
+        self.ACCOUNT = config.get("Database", "login")
+        self.API_KEY = config.get("Database", "APILogin")
+        self.API_PASS = config.get("Database", "APIPass")
+        self.DBNAME = config.get("Database", "name")
+
     def onConnect(self, request):
         """(Request) -> ()
         Defines the server response when a client connects to it.
@@ -224,7 +231,7 @@ if __name__ == "__main__":
     ws_host = config.get("Websocket", "host") + ":" + str(fac_port)
 
     factory = WebSocketServerFactory(ws_host, debug = False)
-    factory.protocol = HGServerProtocol
+    factory.protocol = HGServerProtocol(config)
 
     loop = asyncio.get_event_loop()
     coro = loop.create_server(factory, fac_host, fac_port)
