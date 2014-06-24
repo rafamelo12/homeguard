@@ -44,7 +44,7 @@ class HGServerProtocol(WebSocketServerProtocol):
         stating its status and the database connection is created.
         """
         print("Starting camera capture routine...")
-        stream = take_picture(picamera, self.CONFIG)
+        stream = take_picture(self.CONFIG, picamera)
         (doc_id, doc_json) = create_json(stream)
 
         response = self.homeguard_db.createDoc(doc_id, doc_json)
