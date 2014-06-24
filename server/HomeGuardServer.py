@@ -13,8 +13,9 @@ from base64 import *
 from uuid import *
 
 class HGServerProtocol(WebSocketServerProtocol):
-    def __init__(self, config):
-        self.CONFIG = config
+    def __init__(self):
+        self.CONFIG = configparser.ConfigParser()
+        self.CONFIG.read("config.ini")
         self.ACCOUNT = config.get("Database", "login")
         self.API_KEY = config.get("Database", "APILogin")
         self.API_PASS = config.get("Database", "APIPass")
@@ -223,7 +224,7 @@ if __name__ == "__main__":
     ws_host = config.get("Websocket", "host") + ":" + str(fac_port)
 
     factory = WebSocketServerFactory(ws_host, debug = False)
-    factory.protocol = HGServerProtocol(config)
+    factory.protocol = HGServerProtocol
 
     loop = asyncio.get_event_loop()
     coro = loop.create_server(factory, fac_host, fac_port)
