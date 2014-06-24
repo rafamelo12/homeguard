@@ -220,7 +220,7 @@ def create_json(_stream_data_):
 
 if __name__ == "__main__":
 
-    # Reads config file
+    # Reads the config file
     config = configparser.ConfigParser()
     config.read("config.ini")
 
