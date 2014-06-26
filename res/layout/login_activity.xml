@@ -29,12 +29,44 @@
         android:scaleType="centerInside"
         android:src="@drawable/main_logo_xsm" />
 
+    <EditText
+        android:id="@+id/textPassword"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/textUsername"
+        android:layout_alignRight="@+id/textUsername"
+        android:layout_below="@+id/textUsername"
+        android:layout_marginTop="8dp"
+        android:ems="10"
+        android:hint="@string/password_hint"
+        android:inputType="textPassword"
+        android:textColor="#FFFFFF"
+        android:textColorHint="#99A9BA" />
+
+    <TextView
+        android:id="@+id/section_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:id="@+id/btLogin"
+        android:layout_width="70dp"
+        android:layout_height="40dp"
+        android:layout_above="@+id/footer"
+        android:layout_alignLeft="@+id/footer"
+        android:layout_alignRight="@+id/footer"
+        android:layout_marginBottom="27dp"
+        android:background="#FFFFFF"
+        android:text="@string/bt_login"
+        android:textColor="#000000" />
+
     <TextView
         android:id="@+id/mainText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_above="@+id/btLogin"
         android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
+        android:layout_marginBottom="190dp"
         android:text="@string/home_guard_main_text"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="#FFFFFF" />
@@ -43,47 +75,23 @@
         android:id="@+id/textUsername"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/mainText"
+        android:layout_alignTop="@+id/mainText"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="53dp"
         android:ems="10"
         android:hint="@string/username_hint"
-        android:textColor="#FFFFFF"
-        android:textColorHint="#99A9BA" 
-        android:inputType="textFilter">
-
-        <requestFocus />
-    </EditText>
-
-    <EditText
-        android:id="@+id/textPassword"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/textUsername"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="8dp"
-        android:ems="10"
-        android:hint="@string/password_hint"
-        android:inputType="textPassword"
+        android:inputType="textFilter"
         android:textColor="#FFFFFF"
         android:textColorHint="#99A9BA" />
 
-    <Button
-        android:id="@+id/btLogin"
-        android:layout_width="70dp"
-        android:layout_height="40dp"
-        android:layout_alignLeft="@+id/footer"
-        android:layout_alignRight="@+id/footer"
-        android:layout_below="@+id/textPassword"
-        android:layout_marginTop="20dp"
-        android:background="#FFFFFF"
-        android:text="@string/bt_login"
-        android:textColor="#000000" />
-
     <TextView
-        android:id="@+id/section_label"
+        android:id="@+id/textForgotPassword"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textPassword"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="11dp"
+        android:text="@string/forgot_password"
+        android:textColor="#99A9BA" />
 
 </RelativeLayout>

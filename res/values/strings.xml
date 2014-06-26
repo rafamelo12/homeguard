@@ -2,9 +2,12 @@
 <resources>
 
     <string name="app_name">HomeGuard</string>
-    <string name="title_section1">Screenshot</string>
-    <string name="title_section2">Settings</string>
-    <string name="title_section3">Logout</string>
+    <string name="username">Pierce Hawthorne</string>
+    <string name="screenshot">Screenshot</string>
+    <string name="settings">Settings</string>
+    <string name="logout">Logout</string>
+    <string name="help">Help</string>
+    <string name="about">About</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="action_example">Example action</string>
@@ -14,5 +17,13 @@
     <string name="username_hint">Username</string>
     <string name="password_hint">********</string>
     <string name="home_guard_main_text">HOME GUARD</string>
+    <string name="forgot_password">Recover password</string>
+    <string name="notifications">Notifications</string>
+    <string name="video_quality">Video quality</string>
+    <string name="video_quality_summary">If marked, will not use data plan</string>
+    <string name="stream_wifi">Streaming on WiFi only</string>
+    <string name="manage_devices">Manage my devices</string>
+    <string name="title_activity_settings">SettingsActivity</string>
+    <string name="hello_world">Hello world!</string>
 
 </resources>
