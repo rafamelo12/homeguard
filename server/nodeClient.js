@@ -16,11 +16,11 @@ client.connect(py_port, py_host, function() {
 });
 
 client.on('data', function() {
-	client.pipe(bl(function(err,data) {
-		if(err)
-			console.error(err);
-		console.log('Data received: ' + data);
-	}));
+    client.pipe(bl(function(err, data) {
+        if (err)
+            console.error(err);
+        console.log('Data received: ' + data);
+    }));
     //client.destroy();
 });
 

@@ -3,7 +3,6 @@ import sys, os
 import asyncio
 import cloudant
 import io
-import picamera
 import time
 import configparser
 from autobahn.asyncio.websocket import WebSocketServerProtocol,\
@@ -17,8 +16,13 @@ class HGServerProtocol(WebSocketServerProtocol):
         """() -> ()
         Initializes protocol attributes using configuration file.
         """
-        self.CONFIG = configparser.ConfigParser()
-        self.CONFIG.read("config.ini")
+        if(sys.argv.count('-debug') == 0):
+            self.CONFIG = configparser.ConfigParser()
+            self.CONFIG.read("config.ini")
+        else:
+            self.CONFIG = configparser.ConfigParser()
+            self.CONFIG.read("config_debug.ini")
+
         self.ACCOUNT = config.get("Database", "login")
         self.API_KEY = config.get("Database", "APILogin")
         self.API_PASS = config.get("Database", "APIPass")
@@ -46,7 +50,10 @@ class HGServerProtocol(WebSocketServerProtocol):
         stating its status and the database connection is created.
         """
         print("Starting camera capture routine...")
-        stream = take_picture(self.CONFIG, picamera)
+        if(sys.argv.count('-debug') == 0):
+            stream = take_picture(self.CONFIG, picamera, raspberry = True)
+        else:
+            stream = take_picture(self.CONFIG, picamera, raspberry = False)
         (doc_id, doc_json) = create_json(stream)
 
         response = self.homeguard_db.createDoc(doc_id, doc_json)
@@ -220,9 +227,13 @@ def create_json(_stream_data_):
 
 if __name__ == "__main__":
 
-    # Reads the config file
+    # Reads the config file and checks for debug flag
     config = configparser.ConfigParser()
-    config.read("config.ini")
+    if(sys.argv.count('-debug') == 0):
+        import picamera
+        config.read("config.ini")
+    else:
+        config.read("config_debug.ini")
 
     # Initilializes port and host settings using config data
     fac_host = config.get("Raspberry", "host")
