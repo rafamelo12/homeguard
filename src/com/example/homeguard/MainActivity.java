@@ -13,10 +13,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.support.v4.widget.DrawerLayout;
+import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.VideoView;
+import android.widget.ListView;
 
 public class MainActivity extends ActionBarActivity 
 	implements NavigationDrawerFragment.NavigationDrawerCallbacks{
@@ -24,6 +27,8 @@ public class MainActivity extends ActionBarActivity
     private NavigationDrawerFragment mNavigationDrawerFragment;
 	
 	private CharSequence mTitle;
+	private DrawerLayout drawerLayout;
+	private ListView drawerListView;
 
 	public void onCreate(Bundle savedInstanceState){
 		
@@ -138,6 +143,15 @@ public class MainActivity extends ActionBarActivity
             super.onAttach(activity);
             ((MainActivity) activity).onSectionAttached(
                     getArguments().getInt(ARG_SECTION_NUMBER));
+        }
+    }
+	
+	private class DrawerItemClickListener implements ListView.OnItemClickListener {
+        @Override
+        public void onItemClick(AdapterView parent, View view, int position, long id) {
+            Toast.makeText(MainActivity.this, ((TextView)view).getText(), Toast.LENGTH_LONG).show();
+            drawerLayout.closeDrawer(drawerListView);
+ 
         }
     }
 }
