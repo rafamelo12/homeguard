@@ -81,8 +81,39 @@ class HGServerProtocol(WebSocketServerProtocol):
         """
         if isBinary:
             print("Binary message received: {0} bytes.".format(len(payload)))
+            print("Binary messages cannot be decoded. Can't do nothing... :)")
         else:
             print("Text message received: {0}.".format(payload.decode("utf8")))
+            clientMsg = payload.decode("utf8")
+
+            if(clientMsg == 'take_pic'):
+                print("Starting camera capture routine...")
+                if(sys.argv.count('-debug') == 0):
+                    stream = take_picture(self.CONFIG, picamera, raspberry = True)
+                else:
+                    stream = take_picture(self.CONFIG, picamera, raspberry = False)
+                (doc_id, doc_json) = create_json(stream)
+
+                response = self.homeguard_db.createDoc(doc_id, doc_json)
+
+                if(response.status_code == 201):
+                    print ("Response JSON: " + str(response.json()))
+                    print ("Document JSON: " + str(self.homeguard_db.getDoc(response.json()["id"])))
+                    payload = ("201: " + str(response.json()["id"])).encode("utf8")
+                    #print(payload)
+                    #print(type(payload))
+                    self.sendMessage(payload, False)
+                elif(response.status_code == 409):
+                    print ("Response JSON: " + str(response.json()))
+                    payload = ("409: " + str(response.json()["error"])).encode("utf8")
+                    #print(payload)
+                    self.sendMessage(payload, False)
+
+            elif(clientMsg == 'stream'):
+                print("Starting camera stream...")
+
+                                
+
         #self.sendMessage(payload, isBinary)
 
     def onClose(self, wasClean, code, reason):
@@ -141,6 +172,12 @@ class HGCloudantDB:
         self.document = self.db.document(doc_id)
         return self.document.put(params = doc_json)
 
+    def updateDoc(self, doc_id, doc_json):
+        rev = self.document(doc_id).json()['_rev']
+        doc_json.update({'_rev':rev})
+        return self.document.put(params = doc_json)
+
+
 def new_id():
     """() -> str
     Return a UUID formated as string without dashes.
@@ -163,15 +200,13 @@ def string64(buff):
 
 def take_picture(config, picamera, to_file = False, raspberry = True):
     """(PiCamera, Boolean) -> (Stream)
-    Takes a picture with PiCamera, if to_file is True,
-    saves it to a file and then opens the file to a stream,
-    otherwise keeps it on the memory as a stream object.
-    Opens the stored file and loads its content into
-    a second stream and returns both.
+    Takes a picture with PiCamera, if to_file is True, saves it to a file and then opens 
+    the file to a stream, otherwise keeps it on the memory as a stream object.
+    Opens the stored file and loads its content into a second stream and returns both.
 
-    To test the code without a Raspberry Pi device
-    call take_picture(config, False, False, False)
+    To test the code without a Raspberry Pi device call take_picture(config, False, False, False)
 
+    :param config : Configuration file for PiCamera settings
     :param picamera: PiCamera object from picamera module
     :param to_file: capture image to file or not option
     :param raspberry: test script without a raspberry pi device
@@ -203,27 +238,87 @@ def take_picture(config, picamera, to_file = False, raspberry = True):
 
     return (stream)
 
-def create_json(_stream_data_):
-    """(Stream) -> (String, Dictionary)
+def live_feed(config, picamera, HGCloudantDB, to_file = False, raspberry = True):
+    """(PiCamera, Boolean, Database) -> (Boolean)
+    Creates a livestream by uploading a stream of pictures into CloudantDB. Returns True
+    if the stream was successful or False otherwise.
+    """
+    if not raspberry:
+        print('Warning: Debug mode will overwrite stream data on Cloudant by default.')
+        print('Change configs if you wish to keep your last stream data.')
+        return False
+
+    with picamera.PiCamera() as camera:
+        camera.exposure_mode = config.get("LiveStream", "exposureMode")
+        camera.resolution = (config.getint("LiveStream", "resWidth"), /
+                             config.getint("LiveStream", "resHeight"))
+
+        start_time = time.time()
+        finish_time = time.time()
+        data_stream = io.BytesIO
+
+
+        while(finish_time - start_time < 60):
+            camera.capture(data_stream, 'jpeg')
+            data_stream.seek(0)
+            stream_json = create_fixID_json(data_stream, 'streamDoc')
+
+            req = HGCloudantDB.updateDoc('streamDoc', stream_json)
+            print('Stream status:' + req.status_code)
+
+            time.sleep(0.2)
+            finish_time = time.time()
+
+    if(req.status_code == 200):
+        return True
+    else:
+        return False
+
+def create_fixID_json(stream_data, fix_id):
+    """(Stream, String) -> (Dictionary)
     Creates a dictionary using stream data. The cloudant library
     interprets the dictionary as if it were a JSON.
 
-    :param _stream_data_: Stream data to be written on JSON object
-    :returns: id as string, JSON as Dictionary
+    :param stream_data: Stream data to be written on JSON object
+    :param fix_id: Predefined stream ID
+    :returns: JSON as Dictionary
     """
     local_time = datetime.now()
     utc_time = datetime.utcfromtimestamp(local_time.timestamp())
-    _file_JSON_ = {
+    file_JSON = {
+        "_id": fix_id
         "local_timestamp": str(local_time),
         "utc_timestamp": str(utc_time),
         "_attachments": {
             "file.jpg": {
                 "content_type": "image/jpeg",
-                "data": string64(_stream_data_)
+                "data": string64(stream_data)
             }
         }
     }
-    return new_id(), _file_JSON_
+    return file_JSON
+
+def create_json(stream_data):
+    """(Stream) -> (String, Dictionary)
+    Creates a dictionary using stream data. The cloudant library
+    interprets the dictionary as if it were a JSON.
+
+    :param stream_data: Stream data to be written on JSON object
+    :returns: id as string, JSON as Dictionary
+    """
+    local_time = datetime.now()
+    utc_time = datetime.utcfromtimestamp(local_time.timestamp())
+    file_JSON = {
+        "local_timestamp": str(local_time),
+        "utc_timestamp": str(utc_time),
+        "_attachments": {
+            "file.jpg": {
+                "content_type": "image/jpeg",
+                "data": string64(stream_data)
+            }
+        }
+    }
+    return new_id(), file_JSON
 
 if __name__ == "__main__":
 
