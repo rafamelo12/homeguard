@@ -1,14 +1,19 @@
-package com.example.homeguard;
+package com.bdu.homeguard;
+
+import com.example.homeguard.R;
 
 import android.support.v7.app.ActionBarActivity;
 import android.support.v4.app.Fragment;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 //public class MainActivity extends ActionBarActivity
 //        implements NavigationDrawerFragment.NavigationDrawerCallbacks {
@@ -25,16 +30,40 @@ public class LoginActivity extends ActionBarActivity{
         getSupportActionBar().hide();
         
         Button btLogin = (Button) findViewById(R.id.btLogin);
+        TextView forgotPassword = (TextView) findViewById(R.id.textForgotPassword);
+        final EditText textUsername = (EditText) findViewById(R.id.textUsername);
+        final EditText textPassword = (EditText) findViewById(R.id.textPassword);
+        
+        //-------- OnClickListener for the "Login" button        
         btLogin.setOnClickListener(new View.OnClickListener(){
         	
         	//On click on the button "Login", starts login process
         	public void onClick(View v){
         		
-        		Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-        		startActivity(intent);
-        		
+        		if(textUsername.getText().toString().trim().length() <= 0){
+        			Toast.makeText(getApplicationContext(), "How 'bout a username?", Toast.LENGTH_SHORT).show();
+        		}else if(textPassword.getText().toString().trim().length() <= 0){
+        			Toast.makeText(getApplicationContext(), "What if a u put password bro?", Toast.LENGTH_SHORT).show();
+        		}else{
+            		Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+            		startActivity(intent);
+        		}
         	}
         });
+        
+        //-------- OnClickListener for the "Forgot Password" button
+        forgotPassword.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				//Opens browser if user clicks on "Forgot Password"
+				Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://homeguard.mybluemix.net/"));
+				startActivity(browserIntent);
+			}
+		});
+        	
+        	
+   
 
 //        mNavigationDrawerFragment = (NavigationDrawerFragment)
 //                getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);

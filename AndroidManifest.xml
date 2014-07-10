@@ -3,6 +3,18 @@
     package="com.example.homeguard"
     android:versionCode="1"
     android:versionName="1.0" >
+    
+    <!-- IF MANIFEST CRASHES, THIS IS THE PROBLEM, JUST SAYING -->
+    <uses-permission
+        android:name="android.permission.INTERNET"/>
+    <uses-permission
+        android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission
+        android:name="android.permission.GET_ACCOUNTS"/>
+    <uses-permission
+        android:name="android.permission.USE_CREDENTIALS"/>
+    <uses-permission
+        android:name="android.permission.ACESS_WIFI_STATE"/>
 
     <uses-sdk
         android:minSdkVersion="11"
@@ -19,7 +31,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.example.homeguard.LoginActivity"
+            android:name="com.bdu.homeguard.LoginActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/app_name"
             android:screenOrientation="portrait" >
@@ -30,7 +42,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.example.homeguard.MainActivity"
+            android:name="com.bdu.homeguard.MainActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/app_name"
             android:screenOrientation="user" >
@@ -41,7 +53,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.example.homeguard.SettingsActivity"
+            android:name="com.bdu.homeguard.SettingsActivity"
             android:label="@string/title_activity_settings" >
         </activity>
     </application>

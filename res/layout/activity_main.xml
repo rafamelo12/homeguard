@@ -4,7 +4,7 @@
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.homeguard.MainActivity" >
+    tools:context="com.bdu.homeguard.MainActivity" >
 
     <FrameLayout
         android:id="@+id/container"
@@ -13,7 +13,7 @@
 
     <fragment
         android:id="@+id/navigation_drawer"
-        android:name="com.example.homeguard.NavigationDrawerFragment"
+        android:name="com.bdu.homeguard.NavigationDrawerFragment"
         android:layout_width="@dimen/navigation_drawer_width"
         android:layout_height="match_parent"
         android:layout_gravity="start" />

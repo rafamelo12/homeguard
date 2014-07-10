@@ -1,4 +1,6 @@
-package com.example.homeguard;
+package com.bdu.homeguard;
+
+import com.example.homeguard.R;
 
 import android.app.Activity;
 import android.content.Intent;
