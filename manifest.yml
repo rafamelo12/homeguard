@@ -1,7 +1,5 @@
 applications:
-- services:
-  - homeguard:DataCache
-  disk_quota: 1024M
+- disk_quota: 1024M
   host: homeguard
   name: homeguard
   command: node app.js

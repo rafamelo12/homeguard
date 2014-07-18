@@ -1,0 +1,87 @@
+<!-- views/profile.ejs -->
+<!doctype html>
+<html>
+<head>
+	<title>Node Authentication</title>
+	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
+	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
+	<style>
+		body 		{ padding-top:80px; word-wrap:break-word; }
+	</style>
+</head>
+<body>
+<div class="container">
+
+	<div class="page-header text-center">
+		<h1><span class="fa fa-anchor"></span> Profile Page</h1>
+		<a href="/logout" class="btn btn-default btn-sm">Logout</a>
+	</div>
+
+	<div class="row">
+		<% if (user.password) { %>
+		<!-- LOCAL INFORMATION -->
+		<div class="col-sm-6">
+			<div class="well">
+				<h3><span class="fa fa-user"></span> Local</h3>
+
+					<p>
+						<strong>email</strong>: <%= user._id %><br>
+						<strong>password</strong>: <%= user.password %>
+					</p>
+
+			</div>
+		</div>
+		<% } %>
+		<% if (user.facebook_token) { %>
+		<!-- FACEBOOK INFORMATION -->
+		<div class="col-sm-6">
+			<div class="well">
+				<h3 class="text-primary"><span class="fa fa-facebook"></span> Facebook</h3>
+
+					<p>
+						<strong>id</strong>: <%= user._id %><br>
+						<strong>token</strong>: <%= user.facebook_token %><br>
+						<strong>email</strong>: <%= user.facebook_email %><br>
+						<strong>name</strong>: <%= user.facebook_name %>
+					</p>
+
+			</div>
+		</div>
+		<% } %>
+		<% if (user.twitter_token) { %>
+		<!-- TWITTER INFORMATION -->
+		<div class="col-sm-6">
+			<div class="well">
+				<h3 class="text-info"><span class="fa fa-twitter"></span> Twitter</h3>
+
+					<p>
+						<strong>id</strong>: <%= user._id %><br>
+						<strong>token</strong>: <%= user.twitter_token %><br>
+						<strong>username</strong>: <%= user.twitter_username %><br>
+						<strong>displayName</strong>: <%= user.twitter_displayName %>
+					</p>
+
+			</div>
+		</div>
+		<% } %>
+		<% if (user.google_token) { %>
+		<!-- GOOGLE INFORMATION -->
+		<div class="col-sm-6">
+			<div class="well">
+				<h3 class="text-danger"><span class="fa fa-google-plus"></span> Google</h3>
+
+					<p>
+						<strong>id</strong>: <%= user._id %><br>
+						<strong>token</strong>: <%= user.google_token %><br>
+						<strong>email</strong>: <%= user.google_email %><br>
+						<strong>name</strong>: <%= user.google_name %>
+					</p>
+
+			</div>
+		</div>
+		<% } %>
+	</div>
+
+</div>
+</body>
+</html>
