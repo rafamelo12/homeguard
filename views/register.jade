@@ -1,0 +1,17 @@
+doctype html
+html(lang="en")
+	head
+		link(rel="stylesheet", href="stylesheets/bootstrap.min.css")
+		link(rel="stylesheet", href="stylesheets/bootstrap-theme.min.css")
+		link(rel="stylesheet", href="stylesheets/signin.css")
+
+	body
+		form(action="register2", method="post", class="form-signin")
+			h2(class="form-signin-heading") Please sign up
+			input(name="email" class="form-control" type="email", placeholder="E-mail address" required autofocus)
+			input(name="password" class="form-control" type="password", placeholder="Password" required)
+			label(class="checkbox")
+				input(type="checkbox" value="rememeber-me") 
+				| Remember me
+			button(type="submit" class="btn btn-lg btn-primary btn-block") Sign up
+
