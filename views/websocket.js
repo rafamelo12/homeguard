@@ -1,1 +1,0 @@
-var fileurl = 'http://neryuuk.cloudant.com/homeguard/709a5c5bd66341c293044837cb69e2ae/file.jpg';

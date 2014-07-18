@@ -10,8 +10,10 @@ var passport  = require('passport');
 var flash     = require('connect-flash');
 var session   = require('express-session');
 // var cradle    = require('cradle');
-var bcrypt    = require('bcrypt');
+// var bcrypt    = require('bcrypt');
 var app       = express();
+
+require('./config/passport.js')(passport);
 
 // all environments
 app.set('port', process.env.PORT || 3000);
