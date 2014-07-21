@@ -1,15 +1,11 @@
 // config/passport.js
 // Creating the Strategies
 var LocalStrategy   = require('passport-local').Strategy;
-var FacebookStrategy = require('passport-facebook').Strategy;
-var TwitterStrategy  = require('passport-twitter').Strategy;
-var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 
 // load all the things we need
 var bcrypt = require('bcrypt');
 var cradle = require('cradle');
 var configDB = require('./database.js')
-var configAuth = require('./auth');
 
 // Setting up connection with the Cloudant Database
 var connection = new(cradle.Connection)(configDB.url, 443, {
@@ -37,117 +33,6 @@ module.exports = function(passport) {
             done(err, user);
         });
     });
-    // =========================================================================
-    // GOOGLE ==================================================================
-    // =========================================================================
-    passport.use(new GoogleStrategy({
-
-        clientID        : configAuth.googleAuth.clientID,
-        clientSecret    : configAuth.googleAuth.clientSecret,
-        callbackURL     : configAuth.googleAuth.callbackURL,
-
-    },
-    function(token, refreshToken, profile, done) {
-
-        // make the code asynchronous
-        // User.findOne won't fire until we have all our data back from Google
-        process.nextTick(function() {
-            db.get(profile.id, function (err, user){
-                if(user)
-                    return done(null, user);
-                else{
-                    db.save(profile.id, {
-                        google_token: token,
-                        google_name: profile.displayName,
-                        google_email: profile.emails[0].value
-                    });
-                    setTimeout(function (){
-                            db.get(profile.id, function (err, doc){
-                                console.log("newUser: "+doc);
-                                return done(null, doc);
-                            });    
-                        }, 100); 
-
-                }
-            });
-        });
-
-    }));
-
-    // =========================================================================
-    // TWITTER =================================================================
-    // =========================================================================
-    passport.use(new TwitterStrategy({
-
-        consumerKey     : configAuth.twitterAuth.consumerKey,
-        consumerSecret  : configAuth.twitterAuth.consumerSecret,
-        callbackURL     : configAuth.twitterAuth.callbackURL
-
-    },
-    function(token, tokenSecret, profile, done) {
-
-        // make the code asynchronous
-    // User.findOne won't fire until we have all our data back from Twitter
-        process.nextTick(function() {
-            db.get(profile.id, function (err, user){
-                if(user)
-                    return done(null, user);
-                else{
-                    db.save(profile.id, {
-                        twitter_token: token,
-                        twitter_username: profile.username,
-                        twitter_displayName: profile.displayName
-                    });
-                    setTimeout(function (){
-                            db.get(profile.id, function (err, doc){
-                                console.log("newUser: "+doc);
-                                return done(null, doc);
-                            });    
-                        }, 100); 
-
-                }
-            });
-
-    });
-
-    }));
-    // =========================================================================
-    // FACEBOOK ================================================================
-    // =========================================================================
-    passport.use(new FacebookStrategy({
-
-        // pull in our app id and secret from our auth.js file
-        clientID        : configAuth.facebookAuth.clientID,
-        clientSecret    : configAuth.facebookAuth.clientSecret,
-        callbackURL     : configAuth.facebookAuth.callbackURL
-
-    },
-    function(token, refreshToken, profile, done) {
-
-        // asynchronous
-        process.nextTick(function() {
-
-            // find the user in the database based on their facebook id
-            db.get(profile.id, function (err, user){
-                if(user)
-                    return done(null, user);
-                else{
-                    db.save(profile.id, {
-                        facebook_token: token,
-                        facebook_name: profile.name.givenName + ' ' + profile.name.familyName,
-                        facebook_email: profile.emails[0].value
-                    });
-                    setTimeout(function (){
-                            db.get(profile.id, function (err, doc){
-                                console.log("newUser: "+doc);
-                                return done(null, doc);
-                            });    
-                        }, 100); 
-                }
-            });
-        });
-
-    }));
 
 
  	// =========================================================================
