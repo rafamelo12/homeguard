@@ -53,14 +53,17 @@
               </ul>
             </li>
           </ul>
+          <ul class="nav navbar-nav navbar-right" style="margin-right: -70px"><li><a href="/logout">Logout</a></li></ul>
         </div><!--/.nav-collapse -->
       </div>
     </div>
 
     <!-- show any messages that come back with authentication -->
     <div class="col-sm-6 col-sm-offset-3">
-      <% if (message.length > 0) { %>
-        <br><br><br><br><br><div class="alert alert-success"><%= message %></div>
+      <% var typeAlert = (message == "E-mail sent. Our team will be answering you as soon as possible!");
+      console.log("Substring: "+typeAlert);
+      if (message.length > 0) { %>
+        <br><br><br><br><br><div <% if(typeAlert) { %> class="alert alert-success" <% } else { %>class="alert alert-danger" <% } %>><%= message %></div>
       <% } else {%>
     </div>
     <!-- Begin page content -->
