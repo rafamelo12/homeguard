@@ -87,7 +87,7 @@ class HGServerProtocol(WebSocketServerProtocol):
         it is closed and the closing reason.
         The extra parameters are for future status checking.
         """
-        if(!wasClean):
+        if not wasClean:
             print('Websocket connection unclean. Code: {0}'.format(code))
 
         print("WebSocket connection closed: Code {0} - {1}".format(code, reason))
