@@ -87,7 +87,10 @@ class HGServerProtocol(WebSocketServerProtocol):
         it is closed and the closing reason.
         The extra parameters are for future status checking.
         """
-        print("WebSocket connection closed: {0}".format(reason))
+        if(!wasClean):
+            print('Websocket connection unclean. Code: {0}'.format(code))
+
+        print("WebSocket connection closed: Code {0} - {1}".format(code, reason))
 
 class HGCloudantDB:
     def __init__(self, acc_user, api_key, api_pass):
