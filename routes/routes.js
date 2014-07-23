@@ -1,4 +1,5 @@
 var cradle = require('cradle');
+var nodemailer = require('nodemailer');
 module.exports = function(app, passport) {
 	// =====================================
 	// TAKE PICTURE ========================
@@ -151,51 +152,45 @@ module.exports = function(app, passport) {
 		failureFlash : true // allow flash messages
 	}));
 
-	// =====================================
-	// FACEBOOK ROUTES =====================
-	// =====================================
-	// route for facebook authentication and login
-	app.get('/auth/facebook', passport.authenticate('facebook', { scope : 'email' }));
+    app.post('/contact', function (req, res){
+    	var transporter = nodemailer.createTransport({
+    		service: 'Gmail',
+    		auth: {
+    			user: 'bduhomeguard@gmail.com',
+    			pass: 'password'
+    		}
+    	});
+    	var mailOptions = {
+    		from:  req.body.first_name+' '+req.body.last_name+' <'+req.body.email+'>',
+    		to: 'Rafael Melo <rafamelo.oliveira@gmail.com>',
+    		subject: 'Hello',
+    		text: 'From: '+req.body.email+'<br>'+'First name: '+req.body.first_name+'<br> Last name: '+req.body.last_name+'<br>Text: '+req.body.user_text,
+    		html: 'From: '+req.body.email+'<br>'+'First name: '+req.body.first_name+'<br> Last name: '+req.body.last_name+'<br>Text: '+req.body.user_text
+    	};
+    	transporter.sendMail(mailOptions, function (err, info){
+    		if(err){
+    			req.flash('contactMessage', 'Oops. Something wrong happened, try again!');
+    			res.redirect('/contact');
+    		}
+    		else{
+    			console.log("Message sent: " + info.response);
+    			req.flash('contactMessage', 'E-mail sent. Our team will be answering you as soon as possible!');
+    			res.redirect('/contact');
+    		}
 
-	// handle the callback after facebook has authenticated the user
-	app.get('/auth/facebook/callback',
-		passport.authenticate('facebook', {
-			successRedirect : '/profile',
-			failureRedirect : '/'
-		}));
-
-	// route for logging out
-	app.get('/logout', function(req, res) {
-		req.logout();
-		res.redirect('/');
-	});
-
-	// =====================================
-	// TWITTER ROUTES ======================
-	// =====================================
-	// route for twitter authentication and login
-	app.get('/auth/twitter', passport.authenticate('twitter'));
-
-	// handle the callback after twitter has authenticated the user
-	app.get('/auth/twitter/callback',
-		passport.authenticate('twitter', {
-			successRedirect : '/profile',
-			failureRedirect : '/'
-	}));
-	// =====================================
-	// GOOGLE ROUTES =======================
-	// =====================================
-	// send to google to do the authentication
-	// profile gets us their basic information including their name
-	// email gets their emails
-    app.get('/auth/google', passport.authenticate('google', { scope : ['profile', 'email'] }));
-
-    // the callback after google has authenticated the user
-    app.get('/auth/google/callback',
-            passport.authenticate('google', {
-                    successRedirect : '/profile',
-                    failureRedirect : '/'
-    }));
+    	});
+    });
+    app.get('/contact', isLoggedIn, function (req, res){
+    	res.render('contact.ejs', {
+    		user: req.user,
+    		message: req.flash('contactMessage')
+    	});
+    });
+    app.get('/streaming', isLoggedIn, function (req, res){
+      var host        = 'http://neryuuk.cloudant.com'; // Host in Cloudant
+      var c           = new(cradle.Connection)(host); // Setting up a connection to Cloudant
+      
+    });
 };
 
 // route middleware to make sure a user is logged in
