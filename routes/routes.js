@@ -131,6 +131,24 @@ module.exports = function(app, passport) {
 		console.log(req.user);
 	});
 
+  // =====================================
+  // Cameras =============================
+  // =====================================
+  app.get('/cameras', isLoggedIn, function(req, res) {
+    res.render('cameras.ejs', {
+      user : req.user // get the user out of session and pass to template
+    });
+  });
+
+  // =====================================
+  // About ===============================
+  // =====================================
+  app.get('/about', isLoggedIn, function(req, res) {
+    res.render('default.ejs', {
+      user : req.user // get the user out of session and pass to template
+    });
+  });
+
 	// =====================================
 	// LOGOUT ==============================
 	// =====================================
