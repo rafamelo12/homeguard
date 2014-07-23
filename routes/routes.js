@@ -157,7 +157,7 @@ module.exports = function(app, passport) {
     		service: 'Gmail',
     		auth: {
     			user: 'bduhomeguard@gmail.com',
-    			pass: 'bduniversity'
+    			pass: 'password'
     		}
     	});
     	var mailOptions = {
@@ -168,11 +168,13 @@ module.exports = function(app, passport) {
     		html: 'From: '+req.body.email+'<br>'+'First name: '+req.body.first_name+'<br> Last name: '+req.body.last_name+'<br>Text: '+req.body.user_text
     	};
     	transporter.sendMail(mailOptions, function (err, info){
-    		if(err)
-    			console.log(err);
+    		if(err){
+    			req.flash('contactMessage', 'Oops. Something wrong happened, try again!');
+    			res.redirect('/contact');
+    		}
     		else{
     			console.log("Message sent: " + info.response);
-    			req.flash('contactSuccess', 'E-mail sent. Our team will be answering you as soon as possible!');
+    			req.flash('contactMessage', 'E-mail sent. Our team will be answering you as soon as possible!');
     			res.redirect('/contact');
     		}
 
@@ -181,8 +183,13 @@ module.exports = function(app, passport) {
     app.get('/contact', isLoggedIn, function (req, res){
     	res.render('contact.ejs', {
     		user: req.user,
-    		message: req.flash('contactSuccess')
+    		message: req.flash('contactMessage')
     	});
+    });
+    app.get('/streaming', isLoggedIn, function (req, res){
+      var host        = 'http://neryuuk.cloudant.com'; // Host in Cloudant
+      var c           = new(cradle.Connection)(host); // Setting up a connection to Cloudant
+      
     });
 };
 
