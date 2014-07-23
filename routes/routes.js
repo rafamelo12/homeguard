@@ -1,3 +1,4 @@
+var path = require('path');
 var cradle = require('cradle');
 var nodemailer = require('nodemailer');
 module.exports = function(app, passport) {
@@ -23,7 +24,7 @@ module.exports = function(app, passport) {
     function getFile (id){ // Function to get the file from Cloudant and embed in a HTML
     var attachmentName = 'file.jpg'; // 
     var fileName = uuid.v4(); // Generating the uuid to save the file into server
-    var downloadPath = path.join(__dirname, '/tmp/pictures/'+fileName.toString()+'.jpg'); // Setting the path of where to save the file
+    var downloadPath = path.join(__dirname, '../tmp/pictures/'+fileName.toString()+'.jpg'); // Setting the path of where to save the file
     var writeStream = fs.createWriteStream(downloadPath); // Creating the write stream to save the file into the server
     /* Getting the attachment from the Cloudant document and setting it 
         into a variable so we can pipe to the write stream 
@@ -37,7 +38,10 @@ module.exports = function(app, passport) {
         Now that the file is saved, set the server path to it and embed in a HTML response.
       */
       var serverPath = '/pictures/'+fileName.toString()+'.jpg';
-      res.send('<html><head><link rel="stylesheet" href="stylesheets/button.css"><title>HomeGuard</title></head><body><div align="center"><h1>Your picture: </h1><br><img src="'+serverPath+'" height="500"><a href="/takepicture" class="button">Take a picture</div>');
+      // res.send('<html><head><link rel="stylesheet" href="stylesheets/button.css"><title>HomeGuard</title></head><body><div align="center"><h1>Your picture: </h1><br><img src="'+serverPath+'" height="500"><a href="/takepicture" class="button">Take a picture</div>');
+      res.render('take_picture.ejs', {
+        image: serverPath
+      });
       res.end(); // End the response to the request
       return;
     });
@@ -187,9 +191,18 @@ module.exports = function(app, passport) {
     	});
     });
     app.get('/streaming', isLoggedIn, function (req, res){
-      var host        = 'http://neryuuk.cloudant.com'; // Host in Cloudant
-      var c           = new(cradle.Connection)(host); // Setting up a connection to Cloudant
-      
+      var host     = 'http://neryuuk.cloudant.com'; // Host in Cloudant
+      var cradle   = new(cradle.Connection)(host); // Setting up a connection to Cloudant
+      var uuid     = require('node-uuid');
+      var fs       = require('fs'); // Library used to save the file in the server
+      while (true){
+
+      }
+      // var client   = new WebSocketClient();
+      /*client.on('connect', function (connection){
+        connection.sendUTF('stream');
+
+      });*/
     });
 };
 
