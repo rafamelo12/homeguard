@@ -111,7 +111,7 @@ class HGServerProtocol(WebSocketServerProtocol):
 
             elif(clientMsg == 'stream'):
                 print("Starting camera stream...")
-
+                live_feed(self.CONFIG, picamera, self.homeguard_db, False, True)
                                 
 
         #self.sendMessage(payload, isBinary)
@@ -246,6 +246,16 @@ def live_feed(config, picamera, HGCloudantDB, to_file = False, raspberry = True)
     if not raspberry:
         print('Warning: Debug mode will overwrite stream data on Cloudant by default.')
         print('Change configs if you wish to keep your last stream data.')
+
+        with open(config.get("Path", "image") + "sample.jpg","rb") as f:
+            start_time = time.time()
+            finish_time = time.time()
+            
+            stream = f.read()
+            stream_json = create_fixID_json(stream, 'streamDoc')
+
+            req = HGCloudantDB.updateDoc('streamDoc', stream_json)
+
         return False
 
     with picamera.PiCamera() as camera:
@@ -255,8 +265,7 @@ def live_feed(config, picamera, HGCloudantDB, to_file = False, raspberry = True)
 
         start_time = time.time()
         finish_time = time.time()
-        data_stream = io.BytesIO
-
+        data_stream = io.BytesIO()
 
         while(finish_time - start_time < 60):
             camera.capture(data_stream, 'jpeg')
