@@ -260,8 +260,7 @@ def live_feed(config, picamera, HGCloudantDB, to_file = False, raspberry = True)
 
     with picamera.PiCamera() as camera:
         camera.exposure_mode = config.get("LiveStream", "exposureMode")
-        camera.resolution = (config.getint("LiveStream", "resWidth"), /
-                             config.getint("LiveStream", "resHeight"))
+        camera.resolution = (config.getint("LiveStream", "resWidth"), config.getint("LiveStream", "resHeight"))
 
         start_time = time.time()
         finish_time = time.time()

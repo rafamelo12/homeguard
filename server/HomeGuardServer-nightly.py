@@ -87,7 +87,10 @@ class HGServerProtocol(WebSocketServerProtocol):
         it is closed and the closing reason.
         The extra parameters are for future status checking.
         """
-        print("WebSocket connection closed: {0}".format(reason))
+        if not wasClean:
+            print('Websocket connection unclean. Code: {0}'.format(code))
+
+        print("WebSocket connection closed: Code {0} - {1}".format(code, reason))
 
 class HGCloudantDB:
     def __init__(self, acc_user, api_key, api_pass):
@@ -219,7 +222,7 @@ def create_json(_stream_data_):
         }
     }
     return new_id(), _file_JSON_
-def setup_logging(
+'''def setup_logging(
     default_path = 'log.json',
     default_level = logging.INFO,
     env_key = 'LOG_CFG'
@@ -237,6 +240,7 @@ def setup_logging(
         logging.config.dictConfig(config)
     else:
         logging.basicConfig(level=default_level)
+'''
 
 if __name__ == "__main__":
 
@@ -245,7 +249,7 @@ if __name__ == "__main__":
     config.read("config.ini")
 
     # Configure the logging parameters
-    setup_logging()
+    #setup_logging()
 
     # Initilializes port and host settings using config data
     fac_host = config.get("Raspberry", "host")
@@ -264,7 +268,7 @@ if __name__ == "__main__":
     # Runs the server until an exception is caught
     try:
         print("Server running on {0}.".format(ws_host))
-        logging.info("Server running on {0}.".format(ws_host))
+        #logging.info("Server running on {0}.".format(ws_host))
         loop.run_forever()
     except KeyboardInterrupt:
         pass
