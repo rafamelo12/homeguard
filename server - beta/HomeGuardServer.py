@@ -111,7 +111,16 @@ class HGServerProtocol(WebSocketServerProtocol):
 
             elif(clientMsg == 'stream'):
                 print("Starting camera stream...")
-                live_feed(self.CONFIG, picamera, self.homeguard_db, False, True)
+                stream_status = live_feed(self, picamera, False, True)
+
+                if stream_status:
+                    print('The stream was successfully completed...')
+
+                else:
+                    print('An error was detected on the stream...')
+
+                payload = 'end'.encode('utf-8')
+                self.sendMessage(payload, False)
                                 
 
         #self.sendMessage(payload, isBinary)
@@ -237,29 +246,30 @@ def take_picture(config, picamera, to_file = False, raspberry = True):
 
     return (stream)
 
-def live_feed(config, picamera, HGCloudantDB, to_file = False, raspberry = True):
-    """(PiCamera, Boolean, Database) -> (Boolean)
-    Creates a livestream by uploading a stream of pictures into CloudantDB. Returns True
-    if the stream was successful or False otherwise.
+def live_feed(websockProtocol, picamera, to_file = False, raspberry = True):
+    """(HGServerProtocol, PiCamera) -> (Boolean)
+    Creates a livestream by uploading a stream of pictures into CloudantDB. It takes a pictures every 0.2
+    seconds and uploads it to a fix document at Cloudant. Returns True if the stream was successful 
+    or False otherwise.
     """
     if not raspberry:
         print('Warning: Debug   mode will overwrite stream data on Cloudant by default.')
         print('Change configs if you wish to keep your last stream data.')
 
-        with open(config.get("Path", "image") + "sample.jpg","rb") as f:
+        with open(websockProtocol.CONFIG.get("Path", "image") + "sample.jpg","rb") as f:
             start_time = time.time()
             finish_time = time.time()
             
             stream = f.read()
             stream_json = create_fixID_json(stream, 'streamDoc')
 
-            req = HGCloudantDB.updateDoc('streamDoc', stream_json)
+            req = websockProtocol.homeguard_db.updateDoc('streamDoc', stream_json)
 
         return False
 
     with picamera.PiCamera() as camera:
-        camera.exposure_mode = config.get("LiveStream", "exposureMode")
-        camera.resolution = (config.getint("LiveStream", "resWidth"), config.getint("LiveStream", "resHeight"))
+        camera.exposure_mode = websockProtocol.CONFIG.get("LiveStream", "exposureMode")
+        camera.resolution = (websockProtocol.CONFIG.getint("LiveStream", "resWidth"), websockProtocol.CONFIG.getint("LiveStream", "resHeight"))
 
         start_time = time.time()
         finish_time = time.time()
@@ -270,16 +280,21 @@ def live_feed(config, picamera, HGCloudantDB, to_file = False, raspberry = True)
             data_stream.seek(0)
             stream_json = create_fixID_json(data_stream, 'streamDoc')
 
-            req = HGCloudantDB.updateDoc('streamDoc', stream_json)
+            req = websockProtocol.homeguard_db.updateDoc('streamDoc', stream_json)
             print('Stream status:' + req.status_code)
+
+            if req.status_code == 201:
+                payload = '201'.encode('utf-8')
+                websockProtocol.sendMessage(payload, False)
+            elif req.status_code == 409:
+                payload = '409'.enconde('utf-8')
+                websockProtocol.sendMessage(payload, False)
+                return False
 
             time.sleep(0.2)
             finish_time = time.time()
 
-    if(req.status_code == 200):
-        return True
-    else:
-        return False
+    return True
 
 def create_fixID_json(stream_data, fix_id):
     """(Stream, String) -> (Dictionary)
