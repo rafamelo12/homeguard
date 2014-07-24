@@ -182,7 +182,7 @@ def take_picture(config, picamera, to_file = False, raspberry = True):
 
     with picamera.PiCamera() as camera:
         camera.exposure_mode = "auto"
-        camera.resolution = (1280, 720)
+        camera.resolution = (640, 480)
         #time.sleep(2)
         if to_file:
             file_name = config.get("Path", "image") + new_id() + ".jpg"
