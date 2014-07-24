@@ -177,7 +177,6 @@ class HGCloudantDB:
         doc_json.update({'_rev':rev})
         return self.document.put(params = doc_json)
 
-
 def new_id():
     """() -> str
     Return a UUID formated as string without dashes.
@@ -220,7 +219,7 @@ def take_picture(config, picamera, to_file = False, raspberry = True):
     with picamera.PiCamera() as camera:
         camera.exposure_mode = "auto"
         camera.resolution = (1920, 1080)
-        time.sleep(2)
+        #time.sleep(2)
         if to_file:
             file_name = config.get("Path", "image") + new_id() + ".jpg"
             camera.capture(file_name)
@@ -228,7 +227,7 @@ def take_picture(config, picamera, to_file = False, raspberry = True):
             stream = io.BytesIO()
             camera.capture(stream, "jpeg")
 
-    print("Image captured!")
+    print("Image captured!")    
 
     if to_file:
         with open(file_name,"rb") as f:
@@ -244,7 +243,7 @@ def live_feed(config, picamera, HGCloudantDB, to_file = False, raspberry = True)
     if the stream was successful or False otherwise.
     """
     if not raspberry:
-        print('Warning: Debug mode will overwrite stream data on Cloudant by default.')
+        print('Warning: Debug   mode will overwrite stream data on Cloudant by default.')
         print('Change configs if you wish to keep your last stream data.')
 
         with open(config.get("Path", "image") + "sample.jpg","rb") as f:
