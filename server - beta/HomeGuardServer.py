@@ -49,7 +49,9 @@ class HGServerProtocol(WebSocketServerProtocol):
         When the socket opens, a log entry is written
         stating its status and the database connection is created.
         """
-        print("Starting camera capture routine...")
+        print("Connection opened...")
+
+        """print("Starting camera capture routine...")
         if(sys.argv.count('-debug') == 0):
             stream = take_picture(self.CONFIG, picamera, raspberry = True)
         else:
@@ -69,7 +71,7 @@ class HGServerProtocol(WebSocketServerProtocol):
             print ("Response JSON: " + str(response.json()))
             payload = ("409: " + str(response.json()["error"])).encode("utf8")
             #print(payload)
-            self.sendMessage(payload, False)
+            self.sendMessage(payload, False)"""
 
     def onMessage(self, payload, isBinary):
         """(Stream, Boolean) -> ()
@@ -227,7 +229,7 @@ def take_picture(config, picamera, to_file = False, raspberry = True):
 
     with picamera.PiCamera() as camera:
         camera.exposure_mode = "auto"
-        camera.resolution = (1920, 1080)
+        camera.resolution = (640, 480)
         #time.sleep(2)
         if to_file:
             file_name = config.get("Path", "image") + new_id() + ".jpg"
