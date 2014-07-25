@@ -250,7 +250,7 @@ def live_feed(websockProtocol, picamera, to_file = False, raspberry = True):
     """(HGServerProtocol, PiCamera) -> (Boolean)
     Creates a livestream by uploading a stream of pictures into CloudantDB. It takes a pictures every 0.2
     seconds and uploads it to a fix document at Cloudant. Returns True if the stream was successful 
-    or False otherwise.
+     or False otherwise.
     """
     if not raspberry:
         print('Warning: Debug   mode will overwrite stream data on Cloudant by default.')
@@ -308,7 +308,7 @@ def create_fixID_json(stream_data, fix_id):
     local_time = datetime.now()
     utc_time = datetime.utcfromtimestamp(local_time.timestamp())
     file_JSON = {
-        "_id": fix_id
+        "_id": fix_id,
         "local_timestamp": str(local_time),
         "utc_timestamp": str(utc_time),
         "_attachments": {
