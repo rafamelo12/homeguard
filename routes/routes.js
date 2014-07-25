@@ -1,6 +1,8 @@
 var path = require('path');
 var cradle = require('cradle');
 var nodemailer = require('nodemailer');
+var uuid = require('node-uuid');
+var streamFile = uuid.v4();
 module.exports = function(app, passport) {
 	// =====================================
 	// TAKE PICTURE ========================
@@ -14,7 +16,7 @@ module.exports = function(app, passport) {
     var PORT 				= '5050'; // Port where the Python server in Raspberry Pi is listening
     var WebSocketClient 	= require('websocket').client; // Library used to create the websocket
     var fs 					= require('fs'); // Library used to save the file in the server
-    var uuid 				= require('node-uuid'); // Library used to create uuid to solve async file saving problem
+    // var uuid 				= require('node-uuid'); // Library used to create uuid to solve async file saving problem
     var c 					= new(cradle.Connection)(host); // Setting up a connection to Cloudant
     var client 				= new WebSocketClient(); // Creating the websocket
     var homeguard 			= c.database(database); // Getting a instance of the database from Cloudant
@@ -208,14 +210,55 @@ module.exports = function(app, passport) {
     		message: req.flash('contactMessage')
     	});
     });
-    app.get('/streaming', isLoggedIn, function (req, res){
+    app.get('/streaming', function (req, res){
       var host     = 'http://neryuuk.cloudant.com'; // Host in Cloudant
-      var cradle   = new(cradle.Connection)(host); // Setting up a connection to Cloudant
-      var uuid     = require('node-uuid');
+      var c   = new(cradle.Connection)(host); // Setting up a connection to Cloudant
+      var homeguard       = c.database('homeguard'); // Getting a instance of the database from Cloudant
+      // var uuid     = require('node-uuid');
+      // var fileName = uuid.v4();
       var fs       = require('fs'); // Library used to save the file in the server
-      while (true){
-
-      }
+      var downloadPath = path.join(__dirname, '../tmp/pictures/'+streamFile.toString()+'.jpg'); // Setting the path of where to save the file
+      var attachmentName = 'file.jpg';
+      var cont = 0;
+      var loop = true;
+      // while (loop){
+        var writeStream = fs.createWriteStream(downloadPath); // Creating the write stream to save the file into the server
+        /* Getting the attachment from the Cloudant document and setting it 
+            into a variable so we can pipe to the write stream 
+        */
+        // var readStream = homeguard.getAttachment('683a7228c7be49509ffa066d7c29a8e2', attachmentName, function (err){
+          // if(err){
+            // console.log("Error: " + err.toString());
+            // return
+          // }
+          
+            // Now that the file is saved, set the server path to it and embed in a HTML response.
+          
+          var serverPath = '/pictures/'+streamFile.toString()+'.jpg';
+          if(cont == 0){
+            res.render('streaming.ejs', {
+            image: serverPath,
+            database: homeguard,
+            downloadPath: downloadPath,
+            // streamFile: streamFile,
+            fs: fs
+            });
+            res.end();
+            cont = 1;  
+          }
+          // setTimeout(function(){
+            // console.log("cont: "+cont);
+            // console.log("image name: "+streamFile);
+            // cont += 1;
+            // if(cont == 3){
+              // res.end();
+            // } 
+          // },200)
+          // res.end(); // End the response to the request
+          // return;
+        // });
+        // readStream.pipe(writeStream); // Piping the file into the write stream
+          // } //fim loop
       // var client   = new WebSocketClient();
       /*client.on('connect', function (connection){
         connection.sendUTF('stream');

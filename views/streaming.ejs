@@ -1,0 +1,57 @@
+<!doctype html>
+<html>
+<head>
+	<title>HomeGuard - Take Picture</title>
+	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css"> <!-- load bootstrap css -->
+	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css"> <!-- load fontawesome -->
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.0/jquery.min.js"></script>
+	<% cont = 0 %>
+	<script>
+	$(document).ready(function(){
+		// while(true){
+		<%
+		setTimeout(function(){
+			console.log("Cont: "+cont);
+			cont = cont + 1;
+			writeStream = fs.createWriteStream(downloadPath);
+			readStream = database.getAttachment('683a7228c7be49509ffa066d7c29a8e2','file.jpg',function (err){
+				if(err){
+					console.log(err.toString());
+					return
+				}
+			});
+			readStream.pipe(writeStream);
+		}, 400);
+		%>
+		setInterval(
+			function()
+			{
+				$("#streamImg").attr("src","<%=image%>?"+new Date().getTime());
+			}, 1000)
+		// }
+	});
+
+
+	</script>
+
+	<style>
+		body 		{ padding-top:20px; }
+	</style>
+</head>
+<body>
+<div class="container">
+
+	<div class="jumbotron text-center" style="background-color: #002952">
+		<h1 style="color: #FFFFFF">HomeGuard</h1>
+		<img id="streamImg" src="" height="500"><br><br>
+		<a href="/takepicture" class="btn btn-primary btn-lg">Take Picture</a>
+
+	</div>
+	<% 
+				
+		
+
+	%>
+</div>
+</body>
+</html>	
