@@ -3,9 +3,9 @@ var cradle = require('cradle');
 var nodemailer = require('nodemailer');
 var uuid = require('node-uuid');
 var Promise = require('bluebird');
-var streamFile = uuid.v4();
-module.exports = function(app, passport) {
-  var socket = require('socket.io')(app)
+
+
+module.exports = function(app, passport, server) {
 	// =====================================
 	// TAKE PICTURE ========================
 	// =====================================
@@ -218,9 +218,14 @@ module.exports = function(app, passport) {
       var host     = 'http://neryuuk.cloudant.com'; // Host in Cloudant
       var c   = new(cradle.Connection)(host); // Setting up a connection to Cloudant
       var homeguard       = c.database('homeguard'); // Getting a instance of the database from Cloudant
-      var downloadPath = path.join(__dirname, '../tmp/pictures/'+streamFile.toString()+'.jpg'); // Setting the path of where to save the file
+      var streamFile1 = uuid.v4();
+      var streamFile2 = uuid.v4();
+      var streamFile3 = uuid.v4();
+      var downloadPath1 = path.join(__dirname, '../tmp/pictures/'+streamFile1.toString()+'.jpg'); // Setting the path of where to save the file
+      var downloadPath2 = path.join(__dirname, '../tmp/pictures/'+streamFile2.toString()+'.jpg'); // Setting the path of where to save the file
+      var downloadPath3 = path.join(__dirname, '../tmp/pictures/'+streamFile3.toString()+'.jpg'); // Setting the path of where to save the file
       var attachmentName = 'file.jpg';
-      
+      // var io = require('socket.io')(server);
     var promiseWhile = function(condition, action) {
         var resolver = Promise.defer();
 
@@ -234,30 +239,59 @@ module.exports = function(app, passport) {
         process.nextTick(loop)
         return resolver.promise;
     };
-    var get = 0;
-    var serverPath = '/pictures/'+streamFile.toString()+'.jpg';
+    var get1 = 0;
+    var get2 = 0;
+    var get3 = 0;
+    var serverPath1 = '/pictures/'+streamFile1.toString()+'.jpg';
+    var serverPath2 = '/pictures/'+streamFile2.toString()+'.jpg';
+    var serverPath3 = '/pictures/'+streamFile3.toString()+'.jpg';
     promiseWhile(function(){
-        return true
+        return true;
     }, function(){
         return new Promise(function(resolve, reject){
             setTimeout(function(){
-                writeStream = fs.createWriteStream(downloadPath);
-                readStream = homeguard.getAttachment('683a7228c7be49509ffa066d7c29a8e2','file.jpg',function (err){
-                    console.log("get: "+get);
-                    if(get == 0){
+                writeStream1 = fs.createWriteStream(downloadPath1);
+                readStream1 = homeguard.getAttachment('81b29067bc7f4f2894c3c2f92980207e','file.jpg',function (err){
+                    console.log("get1: "+get1);
+                    if(get1 == 0){
                       console.log('entered here');
-                      res.render('streaming.ejs', {
-                        image: serverPath
+                      res.render('streaming2.ejs', {
+                        user: req.user,
+                        image: serverPath1,
+                        image2: serverPath2,
+                        image3: serverPath3
                       });
                       res.end();
                     }
-                    get++;
+                    get1++;
                     if(err){
                         console.log(err.toString());
                     }
                 });
-                readStream.pipe(writeStream, {end: "false"});
+                readStream1.pipe(writeStream1, {end: "false"});
                 resolve();
+            },1000);
+            setTimeout(function(){
+              writeStream2 = fs.createWriteStream(downloadPath2);
+              readStream2 = homeguard.getAttachment('cf43ec561b2c4ee7b4903ccaa074f4fa', 'file.jpg', function (err){
+                console.log("get2: "+get2);
+                get2++;
+                if(err){
+                  console.log(err.toString());
+                }
+              });
+              readStream2.pipe(writeStream2, {end: "false"});
+            },1000);
+            setTimeout(function(){
+              writeStream3 = fs.createWriteStream(downloadPath3);
+              readStream3 = homeguard.getAttachment('e08b050b8b4f46ee8fe6f9de26c234d1', 'file.jpg', function (err){
+                console.log("get3: "+get3);
+                get3++;
+                if(err){
+                  console.log(err.toString());
+                }
+              });
+              readStream3.pipe(writeStream3, {end: "false"});
             },1000);
         });
     }).then(function(){
