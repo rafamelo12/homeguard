@@ -281,21 +281,27 @@ def live_feed(websockProtocol, picamera, to_file = False, raspberry = True):
         while(finish_time - start_time < 60):
             camera.capture(data_stream, 'jpeg')
             data_stream.seek(0)
-            stream_json = create_fixID_json(data_stream, 'streamDoc')
+            my_img = string64(data_stream)
 
-            req = websockProtocol.homeguard_db.updateDoc('streamDoc', stream_json)
-            print('Stream status:' + str(req.status_code))
+            print('Sending image...')
+            websockProtocol.sendMessage(my_img, False)
 
-            if req.status_code == 201:
+            '''stream_json = create_fixID_json(data_stream, 'streamDoc1')
+
+            req1 = websockProtocol.homeguard_db.updateDoc('streamDoc1', stream_json)
+            print('Stream status:' + str(req1.status_code))
+
+            if req1.status_code == 201:
                 payload = '201'.encode('utf-8')
                 websockProtocol.sendMessage(payload, False)
-            elif req.status_code == 409:
+            elif req1.status_code == 409:
                 payload = '409'.enconde('utf-8')
                 websockProtocol.sendMessage(payload, False)
                 return False
+            '''
 
             time.sleep(0.2)
-            finish_time = time.time()
+            finish_time = time.time() 
 
     return True
 
