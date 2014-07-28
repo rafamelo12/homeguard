@@ -184,7 +184,8 @@ class HGCloudantDB:
         return self.document.put(params = doc_json)
 
     def updateDoc(self, doc_id, doc_json):
-        rev = self.document(doc_id).json()['_rev']
+        self.document = self.db.document(doc_id)
+        rev = self.document.get().json()['_rev']
         doc_json.update({'_rev':rev})
         return self.document.put(params = doc_json)
 
@@ -283,7 +284,7 @@ def live_feed(websockProtocol, picamera, to_file = False, raspberry = True):
             stream_json = create_fixID_json(data_stream, 'streamDoc')
 
             req = websockProtocol.homeguard_db.updateDoc('streamDoc', stream_json)
-            print('Stream status:' + req.status_code)
+            print('Stream status:' + str(req.status_code))
 
             if req.status_code == 201:
                 payload = '201'.encode('utf-8')
