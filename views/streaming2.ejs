@@ -20,11 +20,11 @@
             $("#streamImg").attr("src","<%=image%>?"+new Date().getTime());
             count++;  
           }else if(count == 1){
-            $("#streamImg").attr("src","<%=image2%>?"+new Date().getTime());
-            count++;
+            // $("#streamImg").attr("src","<%=image2%>?"+new Date().getTime());
+            // count++;
           }else{
-            $("#streamImg").attr("src","<%=image3%>?"+new Date().getTime());
-            count = 0;
+            // $("#streamImg").attr("src","<%=image3%>?"+new Date().getTime());
+            // count = 0;
           }
           
         }, 1000);
@@ -62,7 +62,7 @@
         <div class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
             <li><a href="/profile"></a></li>
-            <li><a href="#cameras">Cameras</a></li>
+            <li><a href="/cameras">Cameras</a></li>
             <li><a href="#about">About</a></li>
             <li><a href="/contact">Contact</a></li>
             <li class="active"><a href="/streaming">Streaming</a></li>

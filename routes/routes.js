@@ -58,7 +58,7 @@ module.exports = function(app, passport, server) {
     */
     client.on('connect', function (connection){
        console.log("Connected!");
-       // connection.sendUTF("Test message.");
+       connection.sendUTF("take_pic");
        connection.on('error', function (error){
           console.log("Connection Error: " + error.toString());
        });
@@ -215,6 +215,11 @@ module.exports = function(app, passport, server) {
    
     app.get('/streaming', isLoggedIn, function (req, res){
       var fs = require('fs');
+      var WebSocketClient   = require('websocket').client; // Library used to create the websocket
+      var client        = new WebSocketClient(); // Creating the websocket
+      var IP          = 'neryuuk.ddns.net'; // IP of Raspberyy Pi device
+      var PORT        = '5050'; // Port where the Python server in Raspberry Pi is listening
+      client.connect('ws://'+IP+':'+PORT); // Connecting through the websocket to the Raspberry Pi
       var host     = 'http://neryuuk.cloudant.com'; // Host in Cloudant
       var c   = new(cradle.Connection)(host); // Setting up a connection to Cloudant
       var homeguard       = c.database('homeguard'); // Getting a instance of the database from Cloudant
@@ -239,6 +244,10 @@ module.exports = function(app, passport, server) {
         process.nextTick(loop)
         return resolver.promise;
     };
+    client.on('connect', function (connection){
+      console.log('Connected!');
+      connection.sendUTF("stream");
+    });
     var get1 = 0;
     var get2 = 0;
     var get3 = 0;
@@ -251,7 +260,7 @@ module.exports = function(app, passport, server) {
         return new Promise(function(resolve, reject){
             setTimeout(function(){
                 writeStream1 = fs.createWriteStream(downloadPath1);
-                readStream1 = homeguard.getAttachment('81b29067bc7f4f2894c3c2f92980207e','file.jpg',function (err){
+                readStream1 = homeguard.getAttachment('streamDoc','file.jpg',function (err){
                     console.log("get1: "+get1);
                     if(get1 == 0){
                       console.log('entered here');
