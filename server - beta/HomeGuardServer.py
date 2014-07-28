@@ -184,7 +184,8 @@ class HGCloudantDB:
         return self.document.put(params = doc_json)
 
     def updateDoc(self, doc_id, doc_json):
-        rev = self.document(doc_id).json()['_rev']
+        self.document = self.db.document(doc_id)
+        rev = self.document.get().json()['_rev']
         doc_json.update({'_rev':rev})
         return self.document.put(params = doc_json)
 
