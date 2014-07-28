@@ -284,7 +284,7 @@ def live_feed(websockProtocol, picamera, to_file = False, raspberry = True):
             stream_json = create_fixID_json(data_stream, 'streamDoc')
 
             req = websockProtocol.homeguard_db.updateDoc('streamDoc', stream_json)
-            print('Stream status:' + req.status_code)
+            print('Stream status:' + str(req.status_code))
 
             if req.status_code == 201:
                 payload = '201'.encode('utf-8')
