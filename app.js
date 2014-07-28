@@ -23,7 +23,7 @@ app.use(session({ secret: 'somerandomtextyeahthatsright',
 app.use(passport.initialize());
 app.use(passport.session()); // persistent login sessions
 app.use(flash()); // use connect-flash for flash messages stored in session
-app.use(express.favicon());
+app.use(express.favicon(path.join(__dirname + '/public/images/favicon.png')));
 app.use(express.logger('dev'));
 app.use(express.bodyParser());
 app.use(express.methodOverride());
@@ -36,8 +36,10 @@ if ('development' === app.get('env')) {
     app.use(express.errorHandler());
 }
 
-require('./routes/routes.js')(app, passport);
 
-http.createServer(app).listen(app.get('port'), function() {
+
+var server = http.createServer(app).listen(app.get('port'), function() {
     console.log('Express server listening on port ' + app.get('port'));
 });
+
+require('./routes/routes.js')(app, passport, server);

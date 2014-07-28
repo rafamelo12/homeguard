@@ -10,9 +10,12 @@
 	$(document).ready(function(){
 		setInterval(
 			function(){			
-				$("#streamImg").attr("src","<%=image%>?"+new Date().getTime());
+				// $("streamDiv").find("streamImg").load(function(){
+					$("#streamImg").attr("src","<%=image%>?"+new Date().getTime());
+					// $(this).closest("streamDiv").show(500);
+				// });
+				// $("#streamImg").attr("src","<%=image%>?"+new Date().getTime());
 			}, 1300);
-		
 	});
 	</script>
 
@@ -22,11 +25,13 @@
 </head>
 <body>
 <div class="container">
-	<div class="jumbotron text-center" style="background-color: #002952">
+	<div id="div_holder" style="background-color: #FFF">
+	<div id="streamDiv" class="jumbotron text-center" style="background-color: #002952">
 		<h1 style="color: #FFFFFF">HomeGuard</h1>
 		<img id="streamImg" src="" height="500"><br><br>
 		<a href="/takepicture" class="btn btn-primary btn-lg">Take Picture</a>
 
+	</div>
 	</div>
 </div>
 </body>
