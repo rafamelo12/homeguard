@@ -284,7 +284,7 @@ def live_feed(websockProtocol, picamera, to_file = False, raspberry = True):
             my_img = string64(data_stream)
 
             print('Sending image...')
-            websockProtocol.sendMessage(my_img, False)
+            websockProtocol.sendMessage(my_img, True)
 
             '''stream_json = create_fixID_json(data_stream, 'streamDoc1')
 
