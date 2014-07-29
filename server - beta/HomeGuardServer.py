@@ -302,8 +302,9 @@ def live_feed(websockProtocol, picamera, to_file = False, raspberry = True):
                 return False
             '''
 
-            time.sleep(0.2)
+            #time.sleep(0.2)
             finish_time = time.time() 
+            data_stream.seek(0)
 
     return True
 
