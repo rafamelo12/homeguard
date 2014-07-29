@@ -213,8 +213,12 @@ module.exports = function(app, passport, server) {
     		message: req.flash('contactMessage')
     	});
     });
-   
-    app.get('/streaming', function (req, res){
+   app.get('/mjpeg-stream', isLoggedIn, function (req, res){
+      res.render('streaming3.ejs',{
+        user: req.user
+      });
+    });
+    app.get('/streaming', isLoggedIn, function (req, res){
       var fs = require('fs');
       var WebSocketClient   = require('websocket').client; // Library used to create the websocket
       var client        = new WebSocketClient(); // Creating the websocket
@@ -307,7 +311,7 @@ module.exports = function(app, passport, server) {
     }).then(function(){
         console.log("Done!");
     });
-
+    
 
     });
 };
