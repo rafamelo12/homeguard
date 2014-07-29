@@ -3,6 +3,7 @@ var cradle = require('cradle');
 var nodemailer = require('nodemailer');
 var uuid = require('node-uuid');
 var Promise = require('bluebird');
+var MjpegProxy = require('mjpeg-proxy').MjpegProxy;
 
 
 module.exports = function(app, passport, server) {
@@ -213,7 +214,7 @@ module.exports = function(app, passport, server) {
     	});
     });
    
-    app.get('/streaming', isLoggedIn, function (req, res){
+    app.get('/streaming', function (req, res){
       var fs = require('fs');
       var WebSocketClient   = require('websocket').client; // Library used to create the websocket
       var client        = new WebSocketClient(); // Creating the websocket
@@ -244,6 +245,9 @@ module.exports = function(app, passport, server) {
         process.nextTick(loop)
         return resolver.promise;
     };
+    var serverPath1 = '/pictures/'+streamFile1.toString()+'.jpg';
+    var serverPath2 = '/pictures/'+streamFile2.toString()+'.jpg';
+    var serverPath3 = '/pictures/'+streamFile3.toString()+'.jpg';
     client.on('connect', function (connection){
       console.log('Connected!');
       connection.sendUTF("stream");
@@ -251,9 +255,6 @@ module.exports = function(app, passport, server) {
     var get1 = 0;
     var get2 = 0;
     var get3 = 0;
-    var serverPath1 = '/pictures/'+streamFile1.toString()+'.jpg';
-    var serverPath2 = '/pictures/'+streamFile2.toString()+'.jpg';
-    var serverPath3 = '/pictures/'+streamFile3.toString()+'.jpg';
     promiseWhile(function(){
         return true;
     }, function(){
@@ -263,7 +264,7 @@ module.exports = function(app, passport, server) {
                 readStream1 = homeguard.getAttachment('streamDoc','file.jpg',function (err){
                     console.log("get1: "+get1);
                     if(get1 == 0){
-                      console.log('entered here');
+                      
                       res.render('streaming2.ejs', {
                         user: req.user,
                         image: serverPath1,
@@ -306,6 +307,8 @@ module.exports = function(app, passport, server) {
     }).then(function(){
         console.log("Done!");
     });
+
+
     });
 };
 

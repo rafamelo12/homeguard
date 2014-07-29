@@ -18,16 +18,17 @@
         function(){    
           if(count==0){
             $("#streamImg").attr("src","<%=image%>?"+new Date().getTime());
-            count++;  
-          }else if(count == 1){
-            // $("#streamImg").attr("src","<%=image2%>?"+new Date().getTime());
-            // count++;
+            // count++;  
+          }/*else if(count == 1){
+            $("#streamImg").attr("src","<%=image2%>?"+new Date().getTime());
+            count++;
           }else{
-            // $("#streamImg").attr("src","<%=image3%>?"+new Date().getTime());
-            // count = 0;
-          }
+            $("#streamImg").attr("src","<%=image3%>?"+new Date().getTime());
+            count = 0;
+          }*/
           
-        }, 1000);
+        }, 1015);
+
       
     });
     </script>
@@ -85,7 +86,7 @@
    	<div class="container" id="content" align="center">
       
         <img id="streamImg" src="" height="480" align="center"><br><br>
-      
+        <!-- <iframe src="http://neryuuk.ddns.net:8080/stream_simple.html" height="480" width="640"></iframe> -->
 	</div> <!-- content -->
 	</div> <!-- container -->
 </div> <!-- wrap -->
