@@ -279,7 +279,7 @@ def live_feed(websockProtocol, picamera, to_file = False, raspberry = True):
         data_stream = io.BytesIO()
 
         while(finish_time - start_time < 60):
-            camera.capture(data_stream, 'jpeg')
+            camera.capture(data_stream, 'jpeg', quality = 5)
             data_stream.seek(0)
             
             '''my_img = string64(data_stream)
