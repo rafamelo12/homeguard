@@ -23,13 +23,13 @@
 .navbar-default .navbar-nav > .active > a:hover, 
 .navbar-default .navbar-nav > .active > a:focus {
     color: #FFFFFF;
-    background-color: #191919;
+    background-color: #597C9F;
 }
 .navbar-default .navbar-nav > .open > a, 
 .navbar-default .navbar-nav > .open > a:hover, 
 .navbar-default .navbar-nav > .open > a:focus {
     color: #FFF;
-    background-color: #191919;
+    background-color: #597C9F;
 }
 /* caret */
 .navbar-default .navbar-nav > .dropdown > a .caret {
