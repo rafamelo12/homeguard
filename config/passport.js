@@ -99,11 +99,9 @@ module.exports = function(passport) {
         // find a user whose email is the same as the forms email
         // we are checking to see if the user trying to login already exists
         db.get(email.toString(), function (err, user){
-            if (err)
-                return done(err);
-
             if (!user)
                 return done(null, false, req.flash('loginMessage', 'No user found.'));
+            
 
             bcrypt.compare(password, user.password, function (err, res){
                 if(res)
