@@ -12,7 +12,7 @@ class MotionDetection:
 
         # Configuration parameters
         # Change to adjust sensitive of motion
-        self._MOTION_LEVEL = 50000000
+        self._MOTION_LEVEL = 70000000
         self._THRESHOLD = 65
 
     def _updateImage(self, image):
@@ -75,6 +75,7 @@ def process():
 
             if detection.detectMotion(imageData):
                 print('Motion detected at ' + datetime.datetime.now().strftime("%Y-%m-%d-%H%M%S"))
+                
                 '''tstmp = datetime.datetime.now().strftime("%Y-%m-%d-%H%M%S")
                 image_file = 'capture_%s_%05d.jpg' % (tstmp, count)
                 count += 1

@@ -1,12 +1,9 @@
 #!/usr/bin/env python3.4
-import sys, os
 import asyncio
 import cloudant
 import io
 import picamera
-import time
 import configparser
-import json
 from logging import *
 from autobahn.asyncio.websocket import WebSocketServerProtocol,\
                                         WebSocketServerFactory
@@ -14,7 +11,9 @@ from datetime import datetime
 from base64 import *
 from uuid import *
 
+
 class HGServerProtocol(WebSocketServerProtocol):
+
     def __init__(self):
         """() -> ()
         Initializes protocol attributes using configuration file.
@@ -34,8 +33,8 @@ class HGServerProtocol(WebSocketServerProtocol):
         """
         print("WebSocket connection opening...")
         print("Loging into database server...")
-        self.homeguard_db = HGCloudantDB(self.ACCOUNT,\
-                                         self.API_KEY,\
+        self.homeguard_db = HGCloudantDB(self.ACCOUNT,
+                                         self.API_KEY,
                                          self.API_PASS)
         response = self.homeguard_db.getDB(self.DBNAME)
         print("Database status: {0}".format(response.status_code))
@@ -54,16 +53,17 @@ class HGServerProtocol(WebSocketServerProtocol):
         response = self.homeguard_db.createDoc(doc_id, doc_json)
 
         if(response.status_code == 201):
-            print ("Response JSON: " + str(response.json()))
-            print ("Document JSON: " + str(self.homeguard_db.getDoc(response.json()["id"])))
+            print("Response JSON:", str(response.json()))
+            print("Document JSON:",
+                  str(self.homeguard_db.getDoc(response.json()["id"])))
             payload = ("201: " + str(response.json()["id"])).encode("utf8")
-            #print(payload)
-            #print(type(payload))
+            # print(payload)
+            # print(type(payload))
             self.sendMessage(payload, False)
         elif(response.status_code == 409):
-            print ("Response JSON: " + str(response.json()))
+            print("Response JSON: " + str(response.json()))
             payload = ("409: " + str(response.json()["error"])).encode("utf8")
-            #print(payload)
+            # print(payload)
             self.sendMessage(payload, False)
 
     def onMessage(self, payload, isBinary):
@@ -78,7 +78,7 @@ class HGServerProtocol(WebSocketServerProtocol):
             print("Binary message received: {0} bytes.".format(len(payload)))
         else:
             print("Text message received: {0}.".format(payload.decode("utf8")))
-        #self.sendMessage(payload, isBinary)
+        # self.sendMessage(payload, isBinary)
 
     def onClose(self, wasClean, code, reason):
         """(Boolean, Int, String) -> ()
@@ -90,9 +90,12 @@ class HGServerProtocol(WebSocketServerProtocol):
         if not wasClean:
             print('Websocket connection unclean. Code: {0}'.format(code))
 
-        print("WebSocket connection closed: Code {0} - {1}".format(code, reason))
+        print("WebSocket connection closed: Code {0} - {1}"
+              .format(code, reason))
+
 
 class HGCloudantDB:
+
     def __init__(self, acc_user, api_key, api_pass):
         """
         Initializes the DB client and logs into the database,
@@ -137,7 +140,8 @@ class HGCloudantDB:
         :returns: Response object
         """
         self.document = self.db.document(doc_id)
-        return self.document.put(params = doc_json)
+        return self.document.put(params=doc_json)
+
 
 def new_id():
     """() -> str
@@ -145,7 +149,8 @@ def new_id():
 
     :returns: uuid formated as string without dashes
     """
-    return str(uuid4()).replace("-","")
+    return str(uuid4()).replace("-", "")
+
 
 def string64(buff):
     """(Buffer) -> str
@@ -156,10 +161,11 @@ def string64(buff):
     """
     if(type(buff) == bytes):
         return str(b64encode(buff))[2:-1]
-    else: 
+    else:
         return str(b64encode(buff.read()))[2:-1]
 
-def take_picture(config, picamera, to_file = False, raspberry = True):
+
+def take_picture(config, picamera, to_file=False, raspberry=True):
     """(PiCamera, Boolean) -> (Stream)
     Takes a picture with PiCamera, if to_file is True,
     saves it to a file and then opens the file to a stream,
@@ -175,15 +181,15 @@ def take_picture(config, picamera, to_file = False, raspberry = True):
     :param raspberry: test script without a raspberry pi device
     :returns: image as buffer
     """
-    if not raspberry: 
-        with open(config.get("Path", "image") + "sample.jpg","rb") as f:
+    if not raspberry:
+        with open(config.get("Path", "image") + "sample.jpg", "rb") as f:
             stream = f.read()
         return (stream)
 
     with picamera.PiCamera() as camera:
         camera.exposure_mode = "auto"
         camera.resolution = (640, 480)
-        #time.sleep(2)
+        # time.sleep(2)
         if to_file:
             file_name = config.get("Path", "image") + new_id() + ".jpg"
             camera.capture(file_name)
@@ -194,12 +200,13 @@ def take_picture(config, picamera, to_file = False, raspberry = True):
     print("Image captured!")
 
     if to_file:
-        with open(file_name,"rb") as f:
+        with open(file_name, "rb") as f:
             stream = f.read()
     else:
         stream.seek(0)
 
     return (stream)
+
 
 def create_json(_stream_data_):
     """(Stream) -> (String, Dictionary)
@@ -249,7 +256,7 @@ if __name__ == "__main__":
     config.read("config.ini")
 
     # Configure the logging parameters
-    #setup_logging()
+    # setup_logging()
 
     # Initilializes port and host settings using config data
     fac_host = config.get("Raspberry", "host")
@@ -257,7 +264,7 @@ if __name__ == "__main__":
     ws_host = config.get("Websocket", "host") + ":" + str(fac_port)
 
     # Instantiates webserver factory and attributes it our protocol
-    factory = WebSocketServerFactory(ws_host, debug = False)
+    factory = WebSocketServerFactory(ws_host, debug=False)
     factory.protocol = HGServerProtocol
 
     # Generates a loop, create a server and sets it to run until complete
@@ -268,7 +275,7 @@ if __name__ == "__main__":
     # Runs the server until an exception is caught
     try:
         print("Server running on {0}.".format(ws_host))
-        #logging.info("Server running on {0}.".format(ws_host))
+        # logging.info("Server running on {0}.".format(ws_host))
         loop.run_forever()
     except KeyboardInterrupt:
         pass
